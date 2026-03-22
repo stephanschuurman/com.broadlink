@@ -81,6 +81,9 @@
 
    Homey.setTitle(Homey.__('pair.title'));
 
+   // Start auto discovery immediately (due to docker network isolation the broadcast discovery does not work, so we need to do this manually)
+   Homey.emit('start_discover', {device: {address: null}}, null);
+
    function showError(msg) {
       document.getElementById('broadlink-error').innerHTML = msg;
    }

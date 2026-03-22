@@ -43,7 +43,10 @@ class BroadlinkApp extends Homey.App {
   async onInit() {
     this.log(`${this.id} is running...(debug mode ${DEBUG ? "on" : "off"})`);
     if (DEBUG) {
-      require("inspector").open(9223, "0.0.0.0");
+      const inspector = require("inspector");
+      if (!inspector.url()) {
+        inspector.open(9223, "0.0.0.0");
+      }
     }
 
     this.homey.on("memwarn", () => {
