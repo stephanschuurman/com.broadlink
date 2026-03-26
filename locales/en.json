@@ -10,7 +10,8 @@
     "invalid_response": "Invalid response from device",
     "invalid_sensor_limits": "Invalid sensor limits",
     "invalid_schedule_time": "Invalid schedule time",
-    "no_key_detected": "no key detected"
+    "no_key_detected": "no key detected",
+    "authentication_failed": "Authentication failed"
   },
   "pair": {
     "title": "Pair Broadlink Device",

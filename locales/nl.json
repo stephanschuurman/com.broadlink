@@ -10,7 +10,8 @@
     "invalid_response": "ongeldig antwoord van apparaat.",
     "invalid_sensor_limits": "Ongeldige sensor grenzen.",
     "invalid_schedule_time": "Ongeldige schema tijd",
-    "no_key_detected": "no toets gedetecteerd"
+    "no_key_detected": "no toets gedetecteerd",
+    "authentication_failed": "Authenticatie mislukt"
   },
   "pair": {
     "title": "Broadlink Apparaat Toevoegen",
