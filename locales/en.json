@@ -22,6 +22,7 @@
 	"found_another": "Found another device: __dev__ (__type__)",
 	"invalid_ipaddress": "Invalid IP address",
 	"discovering": "Discovering device...",
+	"auto_discover_failed": "Auto discovery failed. Please enter the IP address manually.",
 	"has_sensors":"Has external sensor",
 	"properties":"Properties",
 	"select_device":"Select device",

@@ -22,6 +22,7 @@
 	"found_another": "Ander apparaat gevonden: __dev__ (__type__)",
 	"invalid_ipaddress": "Ongeldig IP adres",
 	"discovering": "Probeer apparaat te ontdekken...",
+	"auto_discover_failed": "Automatisch zoeken mislukt. Voer het IP-adres handmatig in.",
 	"has_sensors":"Heeft externe sensor",
 	"properties":"Eigenschappen",
 	"select_device":"Selecteer het apparaat",
