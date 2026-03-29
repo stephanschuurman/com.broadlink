@@ -254,6 +254,79 @@ class RM4miniDevice extends BroadlinkDevice {
     }, 300); // Debounce duration in milliseconds (adjust as necessary)
   }
 
+  /**
+   * 
+   * @param {*} hex 
+   * @param {*} repetitions 
+   */
+  async sendHex(hex, repetitions = 1) {
+    this._utils.debugLog(this, `sendHex called with hex: ${hex}, repetitions: ${repetitions}`);
+    
+    // TODO: decode Hex string
+    const raw = new Uint8Array([0x26, 0x00]);
+
+    this._utils.debugLog(this, `sendHex: `);
+    await this._communicate.send_data(raw);
+    return true;
+  }
+
+  /**
+   * Convert a pronto hex string to a Broadlink-compatible Uint8Array and send it.
+   * @param {string} prontoHex  Space-separated pronto hex string
+   * @param {number} repetitions  Number of times to repeat (1–20)
+   */
+  async sendProntoHex(prontoHex, repetitions = 1) {
+    const words = prontoHex.trim().split(/\s+/).map(h => parseInt(h, 16));
+    if (words.length < 4 || words[0] !== 0x0000) {
+      throw new Error('Invalid pronto hex format');
+    }
+
+    const divider = words[1];
+    const onceLen = words[2];
+    const repeatLen = words[3];
+
+    if (divider === 0) throw new Error('Invalid pronto hex: zero frequency divider');
+
+    const freq = 1_000_000 / (divider * 0.241246);
+    const periodUs = 1_000_000 / freq;  // µs per pronto carrier-cycle unit
+
+    // Broadlink tick = 32.84 µs — use floor to match Python pulses_to_data exactly
+    const toTicks = (prontoUnit) => Math.max(1, Math.floor(prontoUnit * periodUs / 32.84));
+
+    const buildSequence = (pulseWords) => {
+      const arr = [];
+      for (const p of pulseWords) {
+        const ticks = toTicks(p);
+        if (ticks > 0xff) {
+          arr.push(0, (ticks >> 8) & 0xff, ticks & 0xff);
+        } else {
+          arr.push(ticks);
+        }
+      }
+      return arr;
+    };
+
+    const onceWords   = words.slice(4, 4 + onceLen * 2);
+    const repeatWords = words.slice(4 + onceLen * 2, 4 + onceLen * 2 + repeatLen * 2);
+
+    // Some pronto codes have burst1=0 and all data in burst2 (repeat section)
+    const mainWords   = onceLen > 0 ? onceWords : repeatWords;
+    const repeatN     = repeatWords.length > 0 ? repeatWords : mainWords;
+
+    const seq = [
+      ...buildSequence(mainWords),
+      ...Array.from({ length: Math.max(0, repetitions - 1) }, () => buildSequence(repeatN)).flat(),
+    ];
+
+    if (seq.length === 0) throw new Error('Pronto hex contains no pulse data');
+
+    const raw = new Uint8Array([0x26, 0x00, seq.length & 0xff, (seq.length >> 8) & 0xff, ...seq]);
+
+    this._utils.debugLog(this, `sendProntoHex: freq=${Math.round(freq)}Hz divider=${divider} once=${onceLen} repeat=${repeatLen} ticks=${seq.length} rep=${repetitions}`);
+    await this._communicate.send_data(raw);
+    return true;
+  }
+
   getNextCmdName() {
     const names = this.dataStore.getCommandNameList();
     let idx = 1;

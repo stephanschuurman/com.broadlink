@@ -1,0 +1,141 @@
+{
+  "triggers": [
+    {
+      "id": "RC_sent_any_rm4_mini",
+      "title": {
+        "en": "Any Remote Command transmitted",
+        "nl": "Commando verzonden"
+      },
+      "tokens": [
+        {
+          "name": "CommandSent",
+          "type": "string",
+          "title": {
+            "en": "Command sent",
+            "nl": "Verzonden commando"
+          },
+          "example": {
+            "en": "Program Up",
+            "nl": "Volgend Programma"
+          }
+        }
+      ]
+    },
+    {
+      "id": "RC_specific_sent_rm4_mini",
+      "title": {
+        "en": "Remote Command transmitted",
+        "nl": "Commando verzonden"
+      },
+      "titleFormatted": {
+        "en": "Specific command [[variable]] sent",
+        "nl": "Specifiek commando [[variable]] verzonden"
+      },
+      "args": [
+        {
+          "name": "variable",
+          "type": "autocomplete",
+          "placeholder": {
+            "en": "name",
+            "nl": "naam"
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "send_command_rm4_mini",
+      "title": {
+        "en": "Send Remote Command",
+        "nl": "Verstuur commando"
+      },
+      "titleFormatted": {
+        "en": "Send command [[variable]]",
+        "nl": "Verstuur commando [[variable]]"
+      },
+      "args": [
+        {
+          "name": "variable",
+          "type": "autocomplete",
+          "placeholder": {
+            "en": "name",
+            "nl": "naam"
+          }
+        }
+      ]
+    },
+    {
+      "id": "send-hex",
+      "title": {
+        "en": "Send hex",
+        "nl": "Verstuur hex"
+      },
+      "titleFormatted": {
+        "en": "Send [[hex]]-command [[repetitions]] keer",
+        "nl": "Verstuur [[hex]]-commando [[repetitions]] keer"
+      },
+      "args": [
+        {
+          "type": "text",
+          "name": "hex",
+          "placeholder": {
+            "en": "hex"
+          }
+        },
+        {
+          "type": "number",
+          "name": "repetitions",
+          "required": false,
+          "title": {
+            "en": "Repetitions",
+            "nl": "Herhalingen"
+          },
+          "placeholder": {
+            "en": "repetitions",
+            "nl": "herhalingen"
+          },
+          "min": 1,
+          "max": 20,
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "send-pronto-hex",
+      "title": {
+        "en": "Send pronto hex",
+        "nl": "Verstuur pronto hex"
+      },
+      "titleFormatted": {
+        "en": "Send [[pronto_hex]]-command [[repetitions]] keer",
+        "nl": "Verstuur [[pronto_hex]]-commando [[repetitions]] keer"
+      },
+      "args": [
+        {
+          "type": "text",
+          "name": "pronto_hex",
+          "placeholder": {
+            "en": "pronto hex"
+          }
+        },
+        {
+          "type": "number",
+          "name": "repetitions",
+          "required": false,
+          "title": {
+            "en": "Repetitions",
+            "nl": "Herhalingen"
+          },
+          "placeholder": {
+            "en": "repetitions",
+            "nl": "herhalingen"
+          },
+          "min": 1,
+          "max": 20,
+          "step": 1
+        }
+      ]
+    }
+  ]
+}

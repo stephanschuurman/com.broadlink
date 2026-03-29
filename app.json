@@ -1508,6 +1508,88 @@
         ]
       },
       {
+        "id": "send-hex",
+        "title": {
+          "en": "Send hex",
+          "nl": "Verstuur hex"
+        },
+        "titleFormatted": {
+          "en": "Send [[hex]]-command [[repetitions]] keer",
+          "nl": "Verstuur [[hex]]-commando [[repetitions]] keer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=RM4_mini"
+          },
+          {
+            "type": "text",
+            "name": "hex",
+            "placeholder": {
+              "en": "hex"
+            }
+          },
+          {
+            "type": "number",
+            "name": "repetitions",
+            "required": false,
+            "title": {
+              "en": "Repetitions",
+              "nl": "Herhalingen"
+            },
+            "placeholder": {
+              "en": "repetitions",
+              "nl": "herhalingen"
+            },
+            "min": 1,
+            "max": 20,
+            "step": 1
+          }
+        ]
+      },
+      {
+        "id": "send-pronto-hex",
+        "title": {
+          "en": "Send pronto hex",
+          "nl": "Verstuur pronto hex"
+        },
+        "titleFormatted": {
+          "en": "Send [[pronto_hex]]-command [[repetitions]] keer",
+          "nl": "Verstuur [[pronto_hex]]-commando [[repetitions]] keer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=RM4_mini"
+          },
+          {
+            "type": "text",
+            "name": "pronto_hex",
+            "placeholder": {
+              "en": "pronto hex"
+            }
+          },
+          {
+            "type": "number",
+            "name": "repetitions",
+            "required": false,
+            "title": {
+              "en": "Repetitions",
+              "nl": "Herhalingen"
+            },
+            "placeholder": {
+              "en": "repetitions",
+              "nl": "herhalingen"
+            },
+            "min": 1,
+            "max": 20,
+            "step": 1
+          }
+        ]
+      },
+      {
         "id": "send_command_rm4_pro",
         "title": {
           "en": "Send Remote Command",

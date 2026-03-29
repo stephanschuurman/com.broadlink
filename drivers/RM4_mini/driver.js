@@ -60,6 +60,14 @@ class BroadlinkRM4miniDriver extends BroadlinkDriver {
 
 		//this.rm3mini_any_cmd_trigger = new Homey.FlowCardTriggerDevice('RC_sent_any').register()
 		this.rm4_mini_any_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_sent_any_rm4_mini");
+
+		this.homey.flow
+			.getActionCard('send-hex')
+			.registerRunListener((args) => args.device.sendHex(args.hex, args.repetitions));
+
+		this.homey.flow
+			.getActionCard('send-pronto-hex')
+			.registerRunListener((args) => args.device.sendProntoHex(args.pronto_hex, args.repetitions));	
 	}
 
 }
