@@ -1,7 +1,7 @@
 /**
  * Driver for Broadlink devices
  *
- * Copyright 2018-2019, R Wensveen
+ * Copyright 2018-2026, R Wensveen, Stephan Schuurman (stephanschuurman.com)
  *
  * This file is part of com.broadlink
  * com.broadlink is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 const BroadlinkDevice = require("../../lib/BroadlinkDevice");
 const DataStore = require("../../lib/DataStore.js");
 const IrConverter = require("../../lib/IrConverter.js");
+const BroadlinkPayloadPacket = require("../../lib/BroadlinkPayloadPacket.js");
 
 class RM4miniDevice extends BroadlinkDevice {
   /**
@@ -115,7 +116,9 @@ class RM4miniDevice extends BroadlinkDevice {
 
       // RC_sent_any: set token
       drv.rm4_mini_any_cmd_trigger.trigger(this, { CommandSent: cmd.name }, {});
-    } catch (e) {}
+    } catch (e) {
+      this._utils.debugLog(this, `executeCommand error: ${e.message || e}`);
+    }
 
     return Promise.resolve(true);
   }
@@ -183,14 +186,6 @@ class RM4miniDevice extends BroadlinkDevice {
         throw err; // Re-throw if it's not the specific error we're handling
       }
     }
-
-    // Re-authenticate on every startup to ensure the AES session key is fresh.
-    // Without this, a device reboot causes ERR_CHECKSUM (0xfffb) on all sends.
-  //   try {
-  //     await this.authenticateDevice();
-  //   } catch (err) {
-  //     this._utils.debugLog(this, `Device.onInit: authentication failed: ${err.message}`);
-  //   }
   }
 
   /**
@@ -266,63 +261,63 @@ class RM4miniDevice extends BroadlinkDevice {
 
 
   /**
+   * Send the given Broadlink Hex string to the device.
    * 
-   * @param {string} hex 
-   * @param {number} repetitions 
-   * @returns {Promise<boolean>}
+   * @param {string} hex          Hex string (with or without spaces)
+   * @param {number} repetitions  Number of times to repeat (1–20)
+   * @returns {Promise<boolean>}  True if the command was sent successfully
    */
   async sendBroadlinkHex(hex, repetitions = 1) {
-    const clean = hex.replace(/\s+/g, '');
-    if (clean.length % 2 !== 0) throw new Error('Invalid hex string: odd length');
+    const pkt = BroadlinkPayloadPacket.fromHex(hex, repetitions);
 
-    const bytes = new Uint8Array(clean.length / 2);
-    for (let i = 0; i < bytes.length; i++) {
-      bytes[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
-    }
+    // Override the repeat flag based on the repetitions parameter
+    pkt.repeatFlag = repetitions > 1 ? Math.min(repetitions, 20) - 1 : 0x00; // device repeat count is 1–20; 0 means no repeat burst
+    const data = pkt.toUint8Array();
+    
+    this._utils.debugLog(this, `sendHex: ${data.length} bytes, rep=${repetitions} - data: ${IrConverter.toHex(data)}`);
+    await this._communicate.send_IR_RF_data_minired(data);
 
-    const toHex = (u8) => Array.from(u8).map(b => b.toString(16).padStart(2, '0')).join(' ');
-    this._utils.debugLog(this, "\n\n\n\ncmdData: " + toHex(this.dataStore.getCommandData("cmd1")));
-    this._utils.debugLog(this, "bytes. : " + toHex(bytes));
-
-
-
-    this._utils.debugLog(this, `sendHex: ${bytes.length} bytes, rep=${repetitions}`);
-    for (let i = 0; i < repetitions; i++) {
-      await this._communicate.send_IR_RF_data_minired(bytes); //  send_IR_RF_data_red
-    }
     return true;
   }
 
-  // https://pasthev.github.io/sensus/
-
+  /**
+   * Send the given Broadlink Base64 string to the device.
+   * 
+   * @param {string} inputString  Base64-encoded Broadlink packet
+   * @param {number} repetitions  Number of times to repeat (1–20)
+   * @returns {Promise<boolean>}  True if the command was sent successfully
+   */
   async sendBroadlinkBase64(inputString, repetitions = 1) {
-    let bufferObj = Buffer.from(inputString, "utf8");
-    let base64String = bufferObj.toString("base64");
-    this._utils.debugLog(this, "bytes. : " + base64String);
-    await this.sendBroadlinkHex(base64String, repetitions);
+    let data = IrConverter.broadlinkBase64toUint8Array(inputString);
+    const pkt = BroadlinkPayloadPacket.fromHex(data, repetitions);
+
+    // Override the repeat flag based on the repetitions parameter
+    pkt.repeatFlag = repetitions > 1 ? Math.min(repetitions, 20) - 1 : 0x00;
+    data = pkt.toUint8Array();
+
+    this._utils.debugLog(this, 'sendBase64: ' + data.length + ' bytes, rep=' + repetitions + ' - data: ' + IrConverter.toHex(data));
+    await this._communicate.send_IR_RF_data_minired(data);
+
+    return true;
   }
-
-
-
-
 
   /**
    * Convert a pronto hex string to a Broadlink-compatible Uint8Array and send it.
    * @param {string} prontoHex  Space-separated pronto hex string
    * @param {number} repetitions  Number of times to repeat (1–20)
+   * @returns {Promise<boolean>}  True if the command was sent successfully
    */
   async sendProntoHex(prontoHex, repetitions = 1) {
-    const { mainRaw, prontoFreq, freqWarning } = IrConverter.prontoToBroadlink(prontoHex, 38000, repetitions);
+    const { mainRaw, prontoFreq, freqWarning } = IrConverter.prontoToBroadlink(prontoHex, 38029, repetitions);
 
     if (freqWarning) {
       this._utils.debugLog(this, `sendProntoHex: pronto carrier ${Math.round(prontoFreq)} Hz deviates from the RM5+ fixed 38 kHz; timing is correct but carrier frequency will differ`);
     }
 
-    const toHex = (u8) => Array.from(u8).map(b => b.toString(16).padStart(2, '0')).join(' ');
-    this._utils.debugLog(this, `mainRaw:   ${toHex(mainRaw)}`);
+    this._utils.debugLog(this, `mainRaw:   ${IrConverter.toHex(mainRaw)}`);
     await this._communicate.send_IR_RF_data_minired(mainRaw);
 
-    return true;
+    return true; 
   }
 
   getNextCmdName() {

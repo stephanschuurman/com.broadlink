@@ -1,7 +1,7 @@
 /**
  * Driver for Broadlink devices
  *
- * Copyright 2018-2019, R Wensveen
+ * Copyright 2018-2026, R Wensveen, Stephan Schuurman (stephanschuurman.com)
  *
  * This file is part of com.broadlink
  * com.broadlink is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 'use strict';
 
 const BroadlinkDriver = require('./../../lib/BroadlinkDriver');
-
 const DeviceInfo = require("./../../lib/DeviceInfo.js");
 const BroadlinkType = DeviceInfo.BroadlinkType;
 
@@ -60,6 +59,10 @@ class BroadlinkRM4miniDriver extends BroadlinkDriver {
 
 		//this.rm3mini_any_cmd_trigger = new Homey.FlowCardTriggerDevice('RC_sent_any').register()
 		this.rm4_mini_any_cmd_trigger = this.homey.flow.getDeviceTriggerCard("RC_sent_any_rm4_mini");
+
+
+
+		/* --- Action Cards --- */
 
 		this.rm4_mini_send_hex = this.homey.flow
 			.getActionCard('send-hex')
