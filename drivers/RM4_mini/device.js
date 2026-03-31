@@ -288,12 +288,12 @@ class RM4miniDevice extends BroadlinkDevice {
    * @returns {Promise<boolean>}  True if the command was sent successfully
    */
   async sendBroadlinkBase64(inputString, repetitions = 1) {
-    let data = IrConverter.broadlinkBase64toUint8Array(inputString);
-    const pkt = BroadlinkPayloadPacket.fromHex(data, repetitions);
+    const bytes = IrConverter.broadlinkBase64toUint8Array(inputString);
+    const pkt = BroadlinkPayloadPacket.fromUint8Array(bytes);
 
     // Override the repeat flag based on the repetitions parameter
     pkt.repeatFlag = repetitions > 1 ? Math.min(repetitions, 20) - 1 : 0x00;
-    data = pkt.toUint8Array();
+    const data = pkt.toUint8Array();
 
     this._utils.debugLog(this, 'sendBase64: ' + data.length + ' bytes, rep=' + repetitions + ' - data: ' + IrConverter.toHex(data));
     await this._communicate.send_IR_RF_data_minired(data);

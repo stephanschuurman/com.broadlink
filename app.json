@@ -1552,6 +1552,47 @@
         ]
       },
       {
+        "id": "send-base64",
+        "title": {
+          "en": "Send Broadlink Base64",
+          "nl": "Verstuur Broadlink Base64"
+        },
+        "titleFormatted": {
+          "en": "Send [[base64]]-command [[repetitions]] keer",
+          "nl": "Verstuur [[base64]]-commando [[repetitions]] keer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=RM4_mini"
+          },
+          {
+            "type": "text",
+            "name": "base64",
+            "placeholder": {
+              "en": "broadlink base64",
+              "nl": "broadlink base64"
+            }
+          },
+          {
+            "type": "number",
+            "name": "repetitions",
+            "required": false,
+            "title": {
+              "en": "repetitions",
+              "nl": "herhalingen"
+            },
+            "placeholder": {
+              "en": "10"
+            },
+            "min": 1,
+            "max": 20,
+            "step": 1
+          }
+        ]
+      },
+      {
         "id": "send-pronto-hex",
         "title": {
           "en": "Send pronto hex",
