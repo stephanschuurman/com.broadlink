@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "broadlink-ir-converter": "1.0.2",
     "crc": "^4.3.2"
   }
 }

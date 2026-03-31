@@ -1510,8 +1510,8 @@
       {
         "id": "send-hex",
         "title": {
-          "en": "Send hex",
-          "nl": "Verstuur hex"
+          "en": "Send Broadlink Hex",
+          "nl": "Verstuur Broadlink Hex"
         },
         "titleFormatted": {
           "en": "Send [[hex]]-command [[repetitions]] keer",
@@ -1527,7 +1527,8 @@
             "type": "text",
             "name": "hex",
             "placeholder": {
-              "en": "hex"
+              "en": "broadlink hex",
+              "nl": "broadlink hex"
             }
           },
           {
@@ -1535,12 +1536,11 @@
             "name": "repetitions",
             "required": false,
             "title": {
-              "en": "Repetitions",
-              "nl": "Herhalingen"
-            },
-            "placeholder": {
               "en": "repetitions",
               "nl": "herhalingen"
+            },
+            "placeholder": {
+              "en": "10"
             },
             "min": 1,
             "max": 20,
@@ -1576,12 +1576,11 @@
             "name": "repetitions",
             "required": false,
             "title": {
-              "en": "Repetitions",
-              "nl": "Herhalingen"
-            },
-            "placeholder": {
               "en": "repetitions",
               "nl": "herhalingen"
+            },
+            "placeholder": {
+              "en": "10"
             },
             "min": 1,
             "max": 20,

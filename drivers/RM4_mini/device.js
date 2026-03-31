@@ -20,6 +20,7 @@
 
 const BroadlinkDevice = require("../../lib/BroadlinkDevice");
 const DataStore = require("../../lib/DataStore.js");
+const IrConverter = require("../../lib/IrConverter.js");
 
 class RM4miniDevice extends BroadlinkDevice {
   /**
@@ -99,11 +100,12 @@ class RM4miniDevice extends BroadlinkDevice {
   async executeCommand(args) {
     try {
       let cmd = args["variable"];
+      let cmdData = this.dataStore.getCommandData(cmd.name);
 
-      this._utils.debugLog(this, "executeCommand " + cmd.name);
+      this._utils.debugLog(this, "executeCommand " + cmd.name, " - data: " + this._utils.arrToHex(cmdData));
 
       // send the command
-      let cmdData = this.dataStore.getCommandData(cmd.name);
+
       await this._communicate.send_IR_RF_data_red(cmdData);
       cmdData = null;
 
@@ -181,6 +183,14 @@ class RM4miniDevice extends BroadlinkDevice {
         throw err; // Re-throw if it's not the specific error we're handling
       }
     }
+
+    // Re-authenticate on every startup to ensure the AES session key is fresh.
+    // Without this, a device reboot causes ERR_CHECKSUM (0xfffb) on all sends.
+  //   try {
+  //     await this.authenticateDevice();
+  //   } catch (err) {
+  //     this._utils.debugLog(this, `Device.onInit: authentication failed: ${err.message}`);
+  //   }
   }
 
   /**
@@ -254,21 +264,47 @@ class RM4miniDevice extends BroadlinkDevice {
     }, 300); // Debounce duration in milliseconds (adjust as necessary)
   }
 
+
   /**
    * 
-   * @param {*} hex 
-   * @param {*} repetitions 
+   * @param {string} hex 
+   * @param {number} repetitions 
+   * @returns {Promise<boolean>}
    */
-  async sendHex(hex, repetitions = 1) {
-    this._utils.debugLog(this, `sendHex called with hex: ${hex}, repetitions: ${repetitions}`);
-    
-    // TODO: decode Hex string
-    const raw = new Uint8Array([0x26, 0x00]);
+  async sendBroadlinkHex(hex, repetitions = 1) {
+    const clean = hex.replace(/\s+/g, '');
+    if (clean.length % 2 !== 0) throw new Error('Invalid hex string: odd length');
 
-    this._utils.debugLog(this, `sendHex: `);
-    await this._communicate.send_data(raw);
+    const bytes = new Uint8Array(clean.length / 2);
+    for (let i = 0; i < bytes.length; i++) {
+      bytes[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+    }
+
+    const toHex = (u8) => Array.from(u8).map(b => b.toString(16).padStart(2, '0')).join(' ');
+    this._utils.debugLog(this, "\n\n\n\ncmdData: " + toHex(this.dataStore.getCommandData("cmd1")));
+    this._utils.debugLog(this, "bytes. : " + toHex(bytes));
+
+
+
+    this._utils.debugLog(this, `sendHex: ${bytes.length} bytes, rep=${repetitions}`);
+    for (let i = 0; i < repetitions; i++) {
+      await this._communicate.send_IR_RF_data_minired(bytes); //  send_IR_RF_data_red
+    }
     return true;
   }
+
+  // https://pasthev.github.io/sensus/
+
+  async sendBroadlinkBase64(inputString, repetitions = 1) {
+    let bufferObj = Buffer.from(inputString, "utf8");
+    let base64String = bufferObj.toString("base64");
+    this._utils.debugLog(this, "bytes. : " + base64String);
+    this.sendBroadlinkHex(base64String, repetitions);
+  }
+
+
+
+
 
   /**
    * Convert a pronto hex string to a Broadlink-compatible Uint8Array and send it.
@@ -276,54 +312,15 @@ class RM4miniDevice extends BroadlinkDevice {
    * @param {number} repetitions  Number of times to repeat (1–20)
    */
   async sendProntoHex(prontoHex, repetitions = 1) {
-    const words = prontoHex.trim().split(/\s+/).map(h => parseInt(h, 16));
-    if (words.length < 4 || words[0] !== 0x0000) {
-      throw new Error('Invalid pronto hex format');
+    const { raw, prontoFreq, freqWarning } = IrConverter.prontoToBroadlink(prontoHex, 38029, repetitions);
+
+    if (freqWarning) {
+      this._utils.debugLog(this, `sendProntoHex: pronto carrier ${Math.round(prontoFreq)} Hz deviates from the RM5+ fixed 38 kHz; timing is correct but carrier frequency will differ`);
     }
 
-    const divider = words[1];
-    const onceLen = words[2];
-    const repeatLen = words[3];
-
-    if (divider === 0) throw new Error('Invalid pronto hex: zero frequency divider');
-
-    const freq = 1_000_000 / (divider * 0.241246);
-    const periodUs = 1_000_000 / freq;  // µs per pronto carrier-cycle unit
-
-    // Broadlink tick = 32.84 µs — use floor to match Python pulses_to_data exactly
-    const toTicks = (prontoUnit) => Math.max(1, Math.floor(prontoUnit * periodUs / 32.84));
-
-    const buildSequence = (pulseWords) => {
-      const arr = [];
-      for (const p of pulseWords) {
-        const ticks = toTicks(p);
-        if (ticks > 0xff) {
-          arr.push(0, (ticks >> 8) & 0xff, ticks & 0xff);
-        } else {
-          arr.push(ticks);
-        }
-      }
-      return arr;
-    };
-
-    const onceWords   = words.slice(4, 4 + onceLen * 2);
-    const repeatWords = words.slice(4 + onceLen * 2, 4 + onceLen * 2 + repeatLen * 2);
-
-    // Some pronto codes have burst1=0 and all data in burst2 (repeat section)
-    const mainWords   = onceLen > 0 ? onceWords : repeatWords;
-    const repeatN     = repeatWords.length > 0 ? repeatWords : mainWords;
-
-    const seq = [
-      ...buildSequence(mainWords),
-      ...Array.from({ length: Math.max(0, repetitions - 1) }, () => buildSequence(repeatN)).flat(),
-    ];
-
-    if (seq.length === 0) throw new Error('Pronto hex contains no pulse data');
-
-    const raw = new Uint8Array([0x26, 0x00, seq.length & 0xff, (seq.length >> 8) & 0xff, ...seq]);
-
-    this._utils.debugLog(this, `sendProntoHex: freq=${Math.round(freq)}Hz divider=${divider} once=${onceLen} repeat=${repeatLen} ticks=${seq.length} rep=${repetitions}`);
-    await this._communicate.send_data(raw);
+    const toHex = (u8) => Array.from(u8).map(b => b.toString(16).padStart(2, '0')).join(' ');
+    this._utils.debugLog(this, `raw: ${toHex(raw)}`);
+    await this._communicate.send_IR_RF_data_minired(raw);
     return true;
   }
 
