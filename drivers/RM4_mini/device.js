@@ -299,7 +299,7 @@ class RM4miniDevice extends BroadlinkDevice {
     let bufferObj = Buffer.from(inputString, "utf8");
     let base64String = bufferObj.toString("base64");
     this._utils.debugLog(this, "bytes. : " + base64String);
-    this.sendBroadlinkHex(base64String, repetitions);
+    await this.sendBroadlinkHex(base64String, repetitions);
   }
 
 
@@ -312,15 +312,16 @@ class RM4miniDevice extends BroadlinkDevice {
    * @param {number} repetitions  Number of times to repeat (1–20)
    */
   async sendProntoHex(prontoHex, repetitions = 1) {
-    const { raw, prontoFreq, freqWarning } = IrConverter.prontoToBroadlink(prontoHex, 38029, repetitions);
+    const { mainRaw, prontoFreq, freqWarning } = IrConverter.prontoToBroadlink(prontoHex, 38000, repetitions);
 
     if (freqWarning) {
       this._utils.debugLog(this, `sendProntoHex: pronto carrier ${Math.round(prontoFreq)} Hz deviates from the RM5+ fixed 38 kHz; timing is correct but carrier frequency will differ`);
     }
 
     const toHex = (u8) => Array.from(u8).map(b => b.toString(16).padStart(2, '0')).join(' ');
-    this._utils.debugLog(this, `raw: ${toHex(raw)}`);
-    await this._communicate.send_IR_RF_data_minired(raw);
+    this._utils.debugLog(this, `mainRaw:   ${toHex(mainRaw)}`);
+    await this._communicate.send_IR_RF_data_minired(mainRaw);
+
     return true;
   }
 
