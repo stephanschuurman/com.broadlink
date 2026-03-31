@@ -4,13 +4,13 @@
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "name": {
-    "en": "Broadlink"
+    "en": "BroadLink"
   },
   "brandColor": "#20df60",
   "homeyCommunityTopicId": 6389,
   "description": {
-    "en": "Adds support for Broadlink devices.",
-    "nl": "Voegt ondersteuning voor Broadlink apparaten toe."
+    "en": "Adds support for BroadLink devices.",
+    "nl": "Voegt ondersteuning voor BroadLink apparaten toe."
   },
   "category": [
     "appliances",
@@ -40,6 +40,9 @@
       },
       {
         "name": "Pieter Verougstraete"
+      },
+      {
+        "name": "Stephan Schuurman"
       }
     ]
   },
