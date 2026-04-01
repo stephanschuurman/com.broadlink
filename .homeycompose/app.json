@@ -3,10 +3,12 @@
   "version": "3.1.67",
   "compatibility": ">=5.0.0",
   "sdk": 3,
+  "platforms": [ "local" ],
   "name": {
     "en": "BroadLink"
   },
   "brandColor": "#20df60",
+  "support": "https://community.homey.app/t/app-pro-broadlink-app/6389",
   "homeyCommunityTopicId": 6389,
   "description": {
     "en": "Adds support for BroadLink devices.",

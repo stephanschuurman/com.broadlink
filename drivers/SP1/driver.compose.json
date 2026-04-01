@@ -1,5 +1,7 @@
 {
 	"id": "SP1",
+	"platforms": ["local"],
+	"connectivity": ["lan"],
 	"name": {
 		"en": "SP1"
 	},

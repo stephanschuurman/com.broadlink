@@ -63,12 +63,12 @@ class BroadlinkRM4miniDriver extends BroadlinkDriver {
 
 
 		/* --- Action Cards --- */
-		this.homey.flow.getActionCard('send-hex')		.registerRunListener((args, state) => args.device.sendBroadlinkHex(args.hex, args.repetitions));
-		this.homey.flow.getActionCard('send-base64')	.registerRunListener((args, state) => args.device.sendBroadlinkBase64(args.base64, args.repetitions));
-		this.homey.flow.getActionCard('send-pronto-hex').registerRunListener((args, state) => args.device.sendProntoHex(args.pronto_hex, args.repetitions));
-		this.homey.flow.getActionCard('send-nec')		.registerRunListener((args, state) => args.device.sendNec(args.address, args.command, args.repetitions));
-		this.homey.flow.getActionCard('send-rc5')		.registerRunListener((args, state) => args.device.sendRc5(args.address, args.command, args.repetitions));
-		this.homey.flow.getActionCard('receive-hex')	.registerRunListener((args, state) => args.device.receiveBroadlinkHex());
+		this.homey.flow.getActionCard('rm4m-send-hex')		.registerRunListener((args, state) => args.device.sendBroadlinkHex(args.hex, args.repetitions));
+		this.homey.flow.getActionCard('rm4m-send-base64')	.registerRunListener((args, state) => args.device.sendBroadlinkBase64(args.base64, args.repetitions));
+		this.homey.flow.getActionCard('rm4m-send-pronto-hex').registerRunListener((args, state) => args.device.sendProntoHex(args.pronto_hex, args.repetitions));
+		this.homey.flow.getActionCard('rm4m-send-nec')		.registerRunListener((args, state) => args.device.sendNec(args.address, args.command, args.repetitions));
+		this.homey.flow.getActionCard('rm4m-send-rc5')		.registerRunListener((args, state) => args.device.sendRc5(args.address, args.command, args.repetitions));
+		this.homey.flow.getActionCard('rm4m-receive-hex')	.registerRunListener((args, state) => args.device.receiveBroadlinkHex());
 	}
 
 }

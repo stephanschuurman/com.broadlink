@@ -1,5 +1,7 @@
 {
   "id": "RM3_mini",
+  "platforms": ["local"],
+  "connectivity": ["lan"],
   "name": {
     "en": "RM3 Mini",
     "nl": "RM3 Mini"
@@ -68,6 +70,10 @@
         },
         "args": [
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -92,6 +98,10 @@
         },
         "args": [
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {

@@ -33,6 +33,10 @@
       },
       "args": [
         {
+          "title": {
+            "en": "Command",
+            "nl": "Commando"
+          },
           "name": "variable",
           "type": "autocomplete",
           "placeholder": {
@@ -56,6 +60,10 @@
       },
       "args": [
         {
+          "title": {
+            "en": "Command",
+            "nl": "Commando"
+          },
           "name": "variable",
           "type": "autocomplete",
           "placeholder": {
@@ -66,7 +74,7 @@
       ]
     },
     {
-      "id": "send-hex",
+      "id": "rm4m-send-hex",
       "title": {
         "en": "Send Broadlink Hex",
         "nl": "Verstuur Broadlink Hex"
@@ -77,6 +85,10 @@
       },
       "args": [
         {
+          "title": {
+            "en": "Command",
+            "nl": "Commando"
+          },
           "type": "text",
           "name": "hex",
           "placeholder": {
@@ -102,7 +114,7 @@
       ]
     },
     {
-      "id": "send-base64",
+      "id": "rm4m-send-base64",
       "title": {
         "en": "Send Broadlink Base64",
         "nl": "Verstuur Broadlink Base64"
@@ -115,6 +127,10 @@
         {
           "type": "text",
           "name": "base64",
+          "title": {
+            "en": "Command",
+            "nl": "Commando"
+          },
           "placeholder": {
             "en": "broadlink base64",
             "nl": "broadlink base64"
@@ -138,7 +154,7 @@
       ]
     },
     {
-      "id": "send-pronto-hex",
+      "id": "rm4m-send-pronto-hex",
       "title": {
         "en": "Send pronto hex",
         "nl": "Verstuur pronto hex"
@@ -149,6 +165,10 @@
       },
       "args": [
         {
+          "title": {
+            "en": "Command",
+            "nl": "Commando"
+          },
           "type": "text",
           "name": "pronto_hex",
           "placeholder": {
@@ -173,7 +193,7 @@
       ]
     },
     {
-      "id": "send-nec",
+      "id": "rm4m-send-nec",
       "title": {
         "en": "Send NEC command",
         "nl": "Verstuur NEC-commando"
@@ -186,15 +206,25 @@
         {
           "type": "text",
           "name": "address",
+          "title": {
+            "en": "Address",
+            "nl": "Adres"
+          },
           "placeholder": {
-            "en": "NEC address"
+            "en": "NEC address",
+            "nl": "NEC adres"
           }
         },
         {
           "type": "text",
           "name": "command",
+          "title": {
+            "en": "Command",
+            "nl": "Commando"
+          },
           "placeholder": {
-            "en": "NEC command"
+            "en": "NEC command",
+            "nl": "NEC commando"
           }
         },
         {
@@ -206,7 +236,8 @@
             "nl": "herhalingen"
           },
           "placeholder": {
-            "en": "10"
+            "en": "10",
+            "nl": "10"
           },
           "min": 1,
           "max": 20,
@@ -215,7 +246,7 @@
       ]
     },
     {
-      "id": "send-rc5",
+      "id": "rm4m-send-rc5",
       "title": {
         "en": "Send RC5 command",
         "nl": "Verstuur RC5-commando"
@@ -228,15 +259,25 @@
         {
           "type": "text",
           "name": "address",
+          "title": {
+            "en": "Address",
+            "nl": "Adres"
+          },
           "placeholder": {
-            "en": "RC5 address"
+            "en": "RC5 address",
+            "nl": "RC5 adres"
           }
         },
         {
           "type": "text",
           "name": "command",
+          "title": {
+            "en": "Command",
+            "nl": "Commando"
+          },
           "placeholder": {
-            "en": "RC5 command"
+            "en": "RC5 command",
+            "nl": "RC5 commando"
           }
         },
         {
@@ -248,7 +289,8 @@
             "nl": "herhalingen"
           },
           "placeholder": {
-            "en": "10"
+            "en": "10",
+            "nl": "10"
           },
           "min": 1,
           "max": 20,
@@ -257,7 +299,7 @@
       ]
     },
     {
-      "id": "receive-hex",
+      "id": "rm4m-receive-hex",
       "title": {
         "en": "Start recording mode",
         "nl": "Start opname-modus"

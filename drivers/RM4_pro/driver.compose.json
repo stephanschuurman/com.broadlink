@@ -1,5 +1,7 @@
 {
   "id": "RM4_pro",
+  "platforms": ["local"],
+  "connectivity": ["lan"],
   "name": {
     "en": "RM4 Pro",
     "nl": "RM4 Pro"
@@ -72,6 +74,10 @@
         },
         "args": [
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -96,6 +102,10 @@
         },
         "args": [
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {

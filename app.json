@@ -4,10 +4,14 @@
   "version": "3.1.67",
   "compatibility": ">=5.0.0",
   "sdk": 3,
+  "platforms": [
+    "local"
+  ],
   "name": {
     "en": "BroadLink"
   },
   "brandColor": "#20df60",
+  "support": "https://community.homey.app/t/app-pro-broadlink-app/6389",
   "homeyCommunityTopicId": 6389,
   "description": {
     "en": "Adds support for BroadLink devices.",
@@ -273,6 +277,10 @@
             "filter": "driver_id=MP1"
           },
           {
+            "title": {
+              "en": "Switch",
+              "nl": "Schakelaar"
+            },
             "name": "switchID",
             "type": "dropdown",
             "values": [
@@ -325,6 +333,10 @@
             "filter": "driver_id=MP1"
           },
           {
+            "title": {
+              "en": "Switch",
+              "nl": "Schakelaar"
+            },
             "name": "switchID",
             "type": "dropdown",
             "values": [
@@ -377,6 +389,10 @@
             "filter": "driver_id=MP1"
           },
           {
+            "title": {
+              "en": "Switch",
+              "nl": "Schakelaar"
+            },
             "name": "switchID",
             "type": "dropdown",
             "values": [
@@ -457,6 +473,10 @@
             "filter": "driver_id=RM3_mini"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -511,6 +531,10 @@
             "filter": "driver_id=RM4_mini"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -565,6 +589,10 @@
             "filter": "driver_id=RM4_pro"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -619,6 +647,10 @@
             "filter": "driver_id=RM_plus"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -673,6 +705,10 @@
             "filter": "driver_id=RM_pro"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -911,6 +947,10 @@
             "filter": "driver_id=A1"
           },
           {
+            "title": {
+              "en": "Air Quality",
+              "nl": "Luchtkwaliteit"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -937,6 +977,10 @@
             "filter": "driver_id=A1"
           },
           {
+            "title": {
+              "en": "Air Quality",
+              "nl": "Luchtkwaliteit"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -963,6 +1007,10 @@
             "filter": "driver_id=A1"
           },
           {
+            "title": {
+              "en": "Air Quality",
+              "nl": "Luchtkwaliteit"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -989,6 +1037,10 @@
             "filter": "driver_id=A1"
           },
           {
+            "title": {
+              "en": "Light Level",
+              "nl": "Lichtniveau"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1015,6 +1067,10 @@
             "filter": "driver_id=A1"
           },
           {
+            "title": {
+              "en": "Light Level",
+              "nl": "Lichtniveau"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1041,6 +1097,10 @@
             "filter": "driver_id=A1"
           },
           {
+            "title": {
+              "en": "Light Level",
+              "nl": "Lichtniveau"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1067,6 +1127,10 @@
             "filter": "driver_id=A1"
           },
           {
+            "title": {
+              "en": "Noise Level",
+              "nl": "Geluidsniveau"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1093,6 +1157,10 @@
             "filter": "driver_id=A1"
           },
           {
+            "title": {
+              "en": "Noise Level",
+              "nl": "Geluidsniveau"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1119,6 +1187,10 @@
             "filter": "driver_id=A1"
           },
           {
+            "title": {
+              "en": "Noise Level",
+              "nl": "Geluidsniveau"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1174,6 +1246,10 @@
             "filter": "driver_id=MP1"
           },
           {
+            "title": {
+              "en": "Switch",
+              "nl": "Schakelaar"
+            },
             "type": "dropdown",
             "name": "switchID",
             "values": [
@@ -1371,6 +1447,10 @@
             "filter": "driver_id=MP1"
           },
           {
+            "title": {
+              "en": "Switch",
+              "nl": "Schakelaar"
+            },
             "type": "dropdown",
             "name": "switchID",
             "values": [
@@ -1423,6 +1503,10 @@
             "filter": "driver_id=MP1"
           },
           {
+            "title": {
+              "en": "Switch",
+              "nl": "Schakelaar"
+            },
             "type": "dropdown",
             "name": "switchID",
             "values": [
@@ -1475,6 +1559,10 @@
             "filter": "driver_id=RM3_mini"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1501,6 +1589,10 @@
             "filter": "driver_id=RM4_mini"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1511,7 +1603,7 @@
         ]
       },
       {
-        "id": "send-hex",
+        "id": "rm4m-send-hex",
         "title": {
           "en": "Send Broadlink Hex",
           "nl": "Verstuur Broadlink Hex"
@@ -1527,6 +1619,10 @@
             "filter": "driver_id=RM4_mini"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "type": "text",
             "name": "hex",
             "placeholder": {
@@ -1552,7 +1648,7 @@
         ]
       },
       {
-        "id": "send-base64",
+        "id": "rm4m-send-base64",
         "title": {
           "en": "Send Broadlink Base64",
           "nl": "Verstuur Broadlink Base64"
@@ -1570,6 +1666,10 @@
           {
             "type": "text",
             "name": "base64",
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "placeholder": {
               "en": "broadlink base64",
               "nl": "broadlink base64"
@@ -1593,7 +1693,7 @@
         ]
       },
       {
-        "id": "send-pronto-hex",
+        "id": "rm4m-send-pronto-hex",
         "title": {
           "en": "Send pronto hex",
           "nl": "Verstuur pronto hex"
@@ -1609,6 +1709,10 @@
             "filter": "driver_id=RM4_mini"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "type": "text",
             "name": "pronto_hex",
             "placeholder": {
@@ -1633,7 +1737,7 @@
         ]
       },
       {
-        "id": "send-nec",
+        "id": "rm4m-send-nec",
         "title": {
           "en": "Send NEC command",
           "nl": "Verstuur NEC-commando"
@@ -1651,15 +1755,25 @@
           {
             "type": "text",
             "name": "address",
+            "title": {
+              "en": "Address",
+              "nl": "Adres"
+            },
             "placeholder": {
-              "en": "NEC address"
+              "en": "NEC address",
+              "nl": "NEC adres"
             }
           },
           {
             "type": "text",
             "name": "command",
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "placeholder": {
-              "en": "NEC command"
+              "en": "NEC command",
+              "nl": "NEC commando"
             }
           },
           {
@@ -1671,7 +1785,8 @@
               "nl": "herhalingen"
             },
             "placeholder": {
-              "en": "10"
+              "en": "10",
+              "nl": "10"
             },
             "min": 1,
             "max": 20,
@@ -1680,7 +1795,7 @@
         ]
       },
       {
-        "id": "send-rc5",
+        "id": "rm4m-send-rc5",
         "title": {
           "en": "Send RC5 command",
           "nl": "Verstuur RC5-commando"
@@ -1698,15 +1813,25 @@
           {
             "type": "text",
             "name": "address",
+            "title": {
+              "en": "Address",
+              "nl": "Adres"
+            },
             "placeholder": {
-              "en": "RC5 address"
+              "en": "RC5 address",
+              "nl": "RC5 adres"
             }
           },
           {
             "type": "text",
             "name": "command",
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "placeholder": {
-              "en": "RC5 command"
+              "en": "RC5 command",
+              "nl": "RC5 commando"
             }
           },
           {
@@ -1718,7 +1843,8 @@
               "nl": "herhalingen"
             },
             "placeholder": {
-              "en": "10"
+              "en": "10",
+              "nl": "10"
             },
             "min": 1,
             "max": 20,
@@ -1727,7 +1853,7 @@
         ]
       },
       {
-        "id": "receive-hex",
+        "id": "rm4m-receive-hex",
         "title": {
           "en": "Start recording mode",
           "nl": "Start opname-modus"
@@ -1789,6 +1915,10 @@
             "filter": "driver_id=RM4_pro"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1815,6 +1945,10 @@
             "filter": "driver_id=RM_plus"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1841,6 +1975,10 @@
             "filter": "driver_id=RM_pro"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1995,6 +2133,12 @@
   "drivers": [
     {
       "id": "A1",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "A1",
         "nl": "A1"
@@ -2099,6 +2243,12 @@
     },
     {
       "id": "Dooya",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "Dooya curtain controler",
         "nl": "Dooya gordijn controller"
@@ -2213,6 +2363,12 @@
     },
     {
       "id": "Hysen",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "Thermostat",
         "nl": "Thermostaat"
@@ -2818,6 +2974,12 @@
     },
     {
       "id": "MP1",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "MP1"
       },
@@ -3487,9 +3649,15 @@
         }
       ],
       "id": "RM3_mini",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
-        "en": "RM3 Mini & Mini Red",
-        "nl": "RM3 Mini & Mini Red"
+        "en": "RM3 Mini",
+        "nl": "RM3 Mini"
       },
       "images": {
         "large": "./drivers/RM3_mini/assets/images/large.jpg",
@@ -4020,6 +4188,12 @@
         }
       ],
       "id": "RM4_mini",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "RM4 Mini & RM5 Plus",
         "nl": "RM4 Mini & RM5 Plus"
@@ -4553,6 +4727,12 @@
         }
       ],
       "id": "RM4_pro",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "RM4 Pro",
         "nl": "RM4 Pro"
@@ -5090,6 +5270,12 @@
         }
       ],
       "id": "RM_plus",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "RM Pro Plus",
         "nl": "RM Pro Plus"
@@ -5643,6 +5829,12 @@
         }
       ],
       "id": "RM_pro",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "RM Pro",
         "nl": "RM Pro"
@@ -5695,6 +5887,12 @@
     },
     {
       "id": "SP1",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "SP1"
       },
@@ -5778,6 +5976,12 @@
     },
     {
       "id": "SP2",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "SP2"
       },
@@ -5921,6 +6125,12 @@
     },
     {
       "id": "SP3S",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
       "name": {
         "en": "SP3S"
       },

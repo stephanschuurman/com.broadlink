@@ -1,5 +1,7 @@
 {
 	"id": "SP3S",
+	"platforms": ["local"],
+	"connectivity": ["lan"],
 	"name": {
 		"en": "SP3S"
 	},

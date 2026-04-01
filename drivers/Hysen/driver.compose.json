@@ -1,5 +1,7 @@
 {
 	"id": "Hysen",
+	"platforms": ["local"],
+	"connectivity": ["lan"],
 	"name": {
 		"en": "Thermostat",
 		"nl": "Thermostaat"

@@ -185,16 +185,6 @@ class RM4miniDevice extends BroadlinkDevice {
         throw err; // Re-throw if it's not the specific error we're handling
       }
     }
-
-
-    let cmdstring = IrConverter.rc5ToPronto("00", "02");
-    this._utils.debugLog(this, `RC5 to Pronto conversion result: ${cmdstring}`);
-
-    // // Voorbeeld: TV Power (Adres 0, Commando 12)
-// console.log(rc5ToPronto(0, 12)); 
-// // Output: 0000 006c 0000 000d 0000 0020 0020 0020 0040 ...
-
-    // this.sendProntoHex(cmdstring);
   }
 
   /**
