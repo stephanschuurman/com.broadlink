@@ -1,8 +1,8 @@
 {
   "id": "RM3_mini",
   "name": {
-    "en": "RM3 Mini & Mini Red",
-    "nl": "RM3 Mini & Mini Red"
+    "en": "RM3 Mini",
+    "nl": "RM3 Mini"
   },
   "images": {
     "large": ".{{driverAssetsPath}}/images/large.jpg",
