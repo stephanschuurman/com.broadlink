@@ -179,7 +179,7 @@
         "nl": "Verstuur NEC-commando"
       },
       "titleFormatted": {
-        "en": "Send [[address]]-[[command]]-command [[repetitions]] keer",
+        "en": "Send [[address]]-[[command]]-command [[repetitions]] times",
         "nl": "Verstuur [[address]]-[[command]]-commando [[repetitions]] keer"
       },
       "args": [
@@ -195,6 +195,48 @@
           "name": "command",
           "placeholder": {
             "en": "NEC command"
+          }
+        },
+        {
+          "type": "number",
+          "name": "repetitions",
+          "required": false,
+          "title": {
+            "en": "repetitions",
+            "nl": "herhalingen"
+          },
+          "placeholder": {
+            "en": "10"
+          },
+          "min": 1,
+          "max": 20,
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "send-rc5",
+      "title": {
+        "en": "Send RC5 command",
+        "nl": "Verstuur RC5-commando"
+      },
+      "titleFormatted": {
+        "en": "Send [[address]]-[[command]]-command [[repetitions]] times",
+        "nl": "Verstuur [[address]]-[[command]]-commando [[repetitions]] keer"
+      },
+      "args": [
+        {
+          "type": "text",
+          "name": "address",
+          "placeholder": {
+            "en": "RC5 address"
+          }
+        },
+        {
+          "type": "text",
+          "name": "command",
+          "placeholder": {
+            "en": "RC5 command"
           }
         },
         {

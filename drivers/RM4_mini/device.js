@@ -186,14 +186,14 @@ class RM4miniDevice extends BroadlinkDevice {
       }
     }
 
-    // NEC
-    // let cmdstring = IrConverter.necToPronto("00", "02");
-    // this._utils.debugLog(this, `NEC to Pronto conversion result: ${cmdstring}`);
-    // this.sendProntoHex(cmdstring);
-
 
     let cmdstring = IrConverter.rc5ToPronto("00", "02");
     this._utils.debugLog(this, `RC5 to Pronto conversion result: ${cmdstring}`);
+
+    // // Voorbeeld: TV Power (Adres 0, Commando 12)
+// console.log(rc5ToPronto(0, 12)); 
+// // Output: 0000 006c 0000 000d 0000 0020 0020 0020 0040 ...
+
     // this.sendProntoHex(cmdstring);
   }
 
@@ -336,6 +336,19 @@ class RM4miniDevice extends BroadlinkDevice {
   async sendNec(address, command, repetitions = 1) {
     const prontoHex = IrConverter.necToPronto(address, command);
     this._utils.debugLog(this, `NEC to Pronto hex: ${prontoHex}`);
+    return await this.sendProntoHex(prontoHex, repetitions);
+  }
+
+  /**
+   * Convert RC5 address and command to a pronto hex string, then send it as Broadlink data.
+   * @param {string} address, Hex string (1 byte), e.g. "00"
+   * @param {string} command, Hex string (1 byte), e.g. "02"
+   * @param {number} repetitions
+   * @returns {Promise<boolean>}  True if the command was sent successfully
+   */
+  async sendRc5(address, command, repetitions = 1) {
+    const prontoHex = IrConverter.rc5ToPronto(address, command);
+    this._utils.debugLog(this, `RC5 to Pronto hex: ${prontoHex}`);
     return await this.sendProntoHex(prontoHex, repetitions);
   }
 
