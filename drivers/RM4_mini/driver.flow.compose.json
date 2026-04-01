@@ -173,6 +173,48 @@
       ]
     },
     {
+      "id": "send-nec",
+      "title": {
+        "en": "Send NEC command",
+        "nl": "Verstuur NEC-commando"
+      },
+      "titleFormatted": {
+        "en": "Send [[address]]-[[command]]-command [[repetitions]] keer",
+        "nl": "Verstuur [[address]]-[[command]]-commando [[repetitions]] keer"
+      },
+      "args": [
+        {
+          "type": "text",
+          "name": "address",
+          "placeholder": {
+            "en": "NEC address"
+          }
+        },
+        {
+          "type": "text",
+          "name": "command",
+          "placeholder": {
+            "en": "NEC command"
+          }
+        },
+        {
+          "type": "number",
+          "name": "repetitions",
+          "required": false,
+          "title": {
+            "en": "repetitions",
+            "nl": "herhalingen"
+          },
+          "placeholder": {
+            "en": "10"
+          },
+          "min": 1,
+          "max": 20,
+          "step": 1
+        }
+      ]
+    },
+    {
       "id": "receive-hex",
       "title": {
         "en": "Start recording mode",
