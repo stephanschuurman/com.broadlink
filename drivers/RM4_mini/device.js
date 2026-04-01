@@ -24,9 +24,10 @@ const IrConverter = require("../../lib/IrConverter.js");
 const BroadlinkPayloadPacket = require("../../lib/BroadlinkPayloadPacket.js");
 
 class RM4miniDevice extends BroadlinkDevice {
+
   /**
-   * Store the given name at the first available place in settings.
-   * i.e. look for an entry 'RcCmd.' (where . is integer >= 0)
+   * Store the given name at the first available place in settings i.e. look for an entry 'RcCmd.' (where . is integer >= 0)
+   * @param {string} cmdname  The name to store in settings
    */
   async storeCmdSetting(cmdname) {
     let settings = this.getSettings();
@@ -49,8 +50,9 @@ class RM4miniDevice extends BroadlinkDevice {
   }
 
   /**
-   * During device initialisation, make sure the commands
-   * in the datastore are identical to the device settings.
+   * During device initialisation, make sure the commands in the datastore are identical to the device settings.
+   * @param {number} offset 
+   * @param {Object} settings
    */
   async fillRcCmdPage(offset, settingsSnapshot) {
     try {
@@ -140,15 +142,12 @@ class RM4miniDevice extends BroadlinkDevice {
     return lst;
   }
 
-  /**
-   *
-   */
   check_condition_specific_cmd_sent(args, state) {
     return Promise.resolve(args.variable.name === state.variable);
   }
 
   /**
-   *
+   * This method is called when the device is initialized. It sets up the flow cards and registers listeners for settings changes and capabilities.
    */
   async onInit() {
     await super.onInit();
@@ -190,7 +189,7 @@ class RM4miniDevice extends BroadlinkDevice {
 
   /**
    * This method will be called when the learn state needs to be changed.
-   * @param onoff
+   * @param {boolean} onoff - True to start learning mode, False to stop learning mode
    */
   async onCapabilityLearnIR(onoff) {
     this._utils.debugLog(this, `onCapabilityLearnIR called with onoff: ${onoff}`);
@@ -221,7 +220,7 @@ class RM4miniDevice extends BroadlinkDevice {
         await this._communicate.enter_learning_red();
         this._utils.debugLog(this, "Entered learning mode");
 
-        let data = await this._communicate.check_IR_data_rm4mini();
+        let data = await this._communicate.check_IR_data_rm4mini(false);
         this._utils.debugLog(this, `Checked IR data, data: ${data}`);
 
         if (data) {
@@ -259,10 +258,8 @@ class RM4miniDevice extends BroadlinkDevice {
     }, 300); // Debounce duration in milliseconds (adjust as necessary)
   }
 
-
   /**
    * Send the given Broadlink Hex string to the device.
-   * 
    * @param {string} hex          Hex string (with or without spaces)
    * @param {number} repetitions  Number of times to repeat (1–20)
    * @returns {Promise<boolean>}  True if the command was sent successfully
@@ -282,7 +279,6 @@ class RM4miniDevice extends BroadlinkDevice {
 
   /**
    * Send the given Broadlink Base64 string to the device.
-   * 
    * @param {string} inputString  Base64-encoded Broadlink packet
    * @param {number} repetitions  Number of times to repeat (1–20)
    * @returns {Promise<boolean>}  True if the command was sent successfully
@@ -320,6 +316,32 @@ class RM4miniDevice extends BroadlinkDevice {
     return true; 
   }
 
+  /**
+   * Start the IR receiving (learning) mode.
+   * @returns {Promise<{ir_result_hex: string, ir_result_base64: string}>}  The learned IR data in both hex and base64 formats
+   */
+  async receiveBroadlinkHex() {
+    try {
+      await this._communicate.enter_learning_red();
+      this._utils.debugLog(this, "Entered learning mode, waiting on IR data...");
+      const data = await this._communicate.check_IR_data_rm4mini(true);
+      const hexData = IrConverter.toHexCompact(data);
+      const base64Data = IrConverter.broadlinkHexToBroadlinkBase64(hexData);
+      this._utils.debugLog(this, `Received IR data (Broadlink Hex): ${hexData}`);
+      return {
+        "ir_result_hex": hexData,
+        "ir_result_base64": base64Data
+      };
+    } catch (e) {
+      this._utils.debugLog(this, `Error starting learning mode: ${e}`);
+      throw new Error(`Error starting learning mode: ${e.message || e}`);
+    }
+  }
+
+  /**
+   * Get the next available command name (e.g. "cmd1", "cmd2", etc.) that is not already used in the datastore.
+   * @returns {string}  The next available command name
+   */
   getNextCmdName() {
     const names = this.dataStore.getCommandNameList();
     let idx = 1;
@@ -330,12 +352,11 @@ class RM4miniDevice extends BroadlinkDevice {
   }
 
   /**
-   * Called when the device settings are changed by the user
-   * (so NOT called on programmatically changing settings)
+   * Called when the device settings are changed by the user (so NOT called on programmatically changing settings)
    *
-   *  @param oldSettingsObj   contains the previous settings object
-   *  @param newSettingsObj   contains the new settings object
-   *  @param changedKeysArr   contains an array of keys that have been changed
+   *  @param {Object} oldSettingsObj   contains the previous settings object
+   *  @param {Object} newSettingsObj   contains the new settings object
+   *  @param {Array<string>} changedKeysArr   contains an array of keys that have been changed
    *  @return {Promise<void>}
    */
   async onSettings({ oldSettings, newSettings, changedKeys }) {

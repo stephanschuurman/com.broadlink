@@ -1633,6 +1633,52 @@
         ]
       },
       {
+        "id": "ir-recorder",
+        "title": {
+          "en": "Start recording mode",
+          "nl": "Start opname-modus"
+        },
+        "titleFormatted": {
+          "en": "Start recording mode to Hex and Base64-string",
+          "nl": "Start opname-modus naar Hex en Base64-string"
+        },
+        "hint": {
+          "en": "Start the IR learning mode. The device will wait for an IR signal and return the result in both Broadlink Hex and Base64 formats.",
+          "nl": "Start de IR-leermodus. Het apparaat wacht op een IR-signaal en geeft het resultaat terug in zowel Broadlink Hex- als Base64-indelingen."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=RM4_mini"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "ir_result_hex",
+            "type": "string",
+            "title": {
+              "en": "IR Result Broadlink Hex",
+              "nl": "IR Resultaat Broadlink Hex"
+            },
+            "example": {
+              "en": "26001a001d1d3a3a1d1d1d1d1d1d1d1d3a1d1d1d1d1d1d1d1d3a1d000b870d05"
+            }
+          },
+          {
+            "name": "ir_result_base64",
+            "type": "string",
+            "title": {
+              "en": "IR Result Broadlink Base64",
+              "nl": "IR Resultaat Broadlink Base64"
+            },
+            "example": {
+              "en": "JgAaAB0dOjodHR0dHR0dHTodHR0dHR0dHTodAAuHDQU="
+            }
+          }
+        ]
+      },
+      {
         "id": "send_command_rm4_pro",
         "title": {
           "en": "Send Remote Command",
