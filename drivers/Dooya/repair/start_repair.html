@@ -1,0 +1,143 @@
+<form class="homey-form">
+
+    <fieldset class="homey-form-fieldset">
+        <legend class="homey-form-legend" style="padding-top: 1rem;" data-i18n="repair.network_settings"></legend>
+
+        <div class="homey-form-group">
+            <fieldset class="homey-form-radio-set">
+                <legend class="homey-form-radio-set-title" data-i18n="repair.discovery_options"></legend>
+
+                <label class="homey-form-radio">
+                    <input class="homey-form-radio-input" type="radio" name="discoveryOptions" id="radio-automatic"
+                        value="automatic" checked />
+                    <span class="homey-form-radio-checkmark"></span>
+                    <span class="homey-form-radio-text" data-i18n="repair.automatic">Automatic</span>
+                </label>
+
+                <label class="homey-form-radio">
+                    <input class="homey-form-radio-input" type="radio" name="discoveryOptions" id="radio-manual"
+                        value="manual" />
+                    <span class="homey-form-radio-checkmark"></span>
+                    <span class="homey-form-radio-text" data-i18n="repair.manual">Manual</span>
+                </label>
+                    
+                <div id="group_manual">
+                    <label for="address" data-i18n="repair.address"></label>
+                    <input type="text" class="form-control" id="address" placeholder="0.0.0.0">
+                 </div>
+                    
+            </fieldset>
+        </div>
+
+
+        <div class="homey-form-group" style="padding: 1rem 0;">
+            <button type="button" class="homey-button-primary-full" id="applyBtn" data-i18n="repair.apply"></button>
+        </div>
+
+    </fieldset>
+</form>
+
+<script type="application/javascript">
+
+    const radios = document.querySelectorAll('input[name="discoveryOptions"]');
+    const addressInput = document.getElementById('address');
+    const applyButton = document.getElementById('applyBtn');
+
+    async function initRepairPage() {
+        try {
+            const deviceContext = await Homey.emit("get_repair_context");
+
+            if (deviceContext && deviceContext.settings && deviceContext.settings.ipAddress) {
+                document.getElementById('address').value = deviceContext.settings.ipAddress;
+                document.getElementById('radio-automatic').checked = deviceContext.settings.ip_assignment_mode === "automatic";
+                document.getElementById('radio-manual').checked = deviceContext.settings.ip_assignment_mode === "manual";
+                syncDiscoveryUi();
+                Homey.setSubtitle(deviceContext.name || Homey.__("repair.subtitle"));
+            }
+
+        } catch (error) {
+            console.error("Failed to load repair context", error);
+        }
+    }
+
+    // If statement for local testing without Homey
+    if (typeof Homey !== "undefined") {
+        Homey.setTitle(Homey.__("repair.title"));
+        initRepairPage();
+    }
+
+    function getDiscoveryMode() {
+        return document.querySelector('input[name="discoveryOptions"]:checked')?.value || 'automatic';
+    }
+
+    async function syncDiscoveryUi() {
+        const mode = getDiscoveryMode();
+        const isManual = mode === 'manual';
+        addressInput.disabled = !isManual;
+
+        if (isManual) {
+            addressInput.focus();
+        } else if (typeof Homey !== 'undefined') {
+            try {
+                const rediscoverResults = await Homey.emit('rediscover', { timeout: 800 });
+                if (rediscoverResults?.[0]?.ipAddress) {
+                    addressInput.value = rediscoverResults[0].ipAddress;
+                } else {
+                    addressInput.value = '';
+                }
+            } catch (error) {
+                alert(Homey.__('repair.rediscover_failed') + ` (${error.message})`);
+            }
+        }
+        
+    }
+
+    function isValidIPv4(ip) {
+        const regex = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
+        return regex.test(ip);
+    }
+
+    async function applyRepairSettings() {
+        const mode = getDiscoveryMode();
+        const ipAddress = addressInput.value.trim();
+
+        if (mode === 'manual' && !isValidIPv4(ipAddress)) {
+            if (typeof Homey !== 'undefined') {
+                await Homey.alert(Homey.__('repair.invalid_ipaddress'));
+            }
+            addressInput.focus();
+            return;
+        }
+
+        const settings = {
+            ip_assignment_mode: mode,
+        };
+
+        if (mode === 'manual') {
+            settings.ipAddress = ipAddress;
+        }
+
+        try {
+            if (typeof Homey === 'undefined') {
+                console.log('Local test, settings payload:', settings);
+                return;
+            }
+
+            await Homey.emit('set_repair_settings', settings);
+            Homey.done();
+        } catch (error) {
+            console.error('Failed to save repair settings', error);
+            await Homey.alert(Homey.__('repair.save_failed'));
+        }
+    }
+
+    // Add event listeners to radio buttons
+    radios.forEach((radio) => {
+        radio.addEventListener('change', syncDiscoveryUi);
+    });
+
+    applyButton.addEventListener('click', applyRepairSettings);
+
+    void syncDiscoveryUi();
+
+</script>

@@ -115,5 +115,8 @@
 				}
 			}
 		]
-	}
+	},
+  "$extends": [
+    "general.settings"
+  ]
 }

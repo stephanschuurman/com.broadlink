@@ -3,8 +3,8 @@
 	"type": "number",
 	"value": 5,
 	"label": {
-		"en": "Interval",
-		"nl": "Interval"
+		"en": "Update Interval",
+		"nl": "Update Interval"
 	},
 	"hint": {
 		"en": "Time in minutes between reading of device status.",
@@ -13,5 +13,9 @@
 	"attr": {
 		"min": 1,
 		"max": 3600
+	},
+	"units": { 
+		"en": "minutes",
+		"nl": "minuten"
 	}
 }

@@ -33,6 +33,19 @@
     "select_device": "Selecteer het apparaat",
     "next": "Volgende &gt;"
   },
+  "repair": {
+    "title": "Herstel Broadlink Apparaat",
+    "subtitle": "Problemen oplossen met uw apparaat",
+    "network_settings": "Netwerkinstellingen",
+    "discovery_options": "Ontdekkingsopties",
+    "automatic": "Automatisch",
+    "manual": "Handmatig",
+    "address": "Statisch IP-adres",
+    "invalid_ipaddress": "Voer een geldig IPv4-adres in",
+    "rediscover_failed": "Apparaat opnieuw ontdekken mislukt",
+    "apply": "OK",
+    "save_failed": "Opslaan mislukt"
+  },
   "settings": {
     "title": "Broadlink Debug Instellingen",
     "compatinfo": "In eenheidsmode, ieder apparaat dat gevonden wordt tijdens paren, zal geaccepteerd worden alsof het van het gewenste type is. Dit betekent dat het geinstalleerde apparaat aangesproken wordt alsof het een apparaat van dat type is. Hierdoor zullen niet alle (of zelfs geen enkele) van zijn mogelijkheden naar behoren werken.",

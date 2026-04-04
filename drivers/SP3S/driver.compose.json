@@ -113,5 +113,8 @@
 				"title": { "en": "Nightlight off", "nl": "Nachtlicht uit"}
 			}
 		]
-	}
+	},
+  "$extends": [
+    "general.settings"
+  ]
 }

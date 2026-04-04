@@ -1,0 +1,21 @@
+{
+    "id": "discovery_interval",
+    "type": "number",
+    "value": 10,
+    "label": {
+        "en": "Discovery Interval",
+        "nl": "Ontdekkingsinterval"
+    },
+    "hint": {
+        "en": "Time in minutes between device discovery attempts.",
+        "nl": "Tijd tussen pogingen om apparaten te ontdekken, in minuten."
+    },
+    "attr": {
+        "min": 1,
+        "max": 3600
+    },
+    "units": {
+        "en": "minutes",
+        "nl": "minuten"
+    }
+}

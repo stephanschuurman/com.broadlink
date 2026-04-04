@@ -7,12 +7,21 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch",
+    "build": "tsc -p tsconfig.build.json",
+    "build:ts": "tsc -p tsconfig.build.json"
   },
   "keywords": [],
-  "author": "",
+  "author": "Bretislav Kubesa,Remko Wensveen, Finn Kristian Meland, Pieter Verougstraete, Stephan Schuurman",
   "license": "ISC",
+  "devDependencies": {
+    "@tsconfig/node24": "^24.0.4",
+    "typescript": "^5.9.3"
+  },
   "dependencies": {
+    "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.12",
     "broadlink-ir-converter": "1.0.2",
     "crc": "^4.3.2"
   }

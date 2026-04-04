@@ -1,0 +1,28 @@
+{
+	"repair": [
+		{
+			"id": "start_repair",
+			"$template": "start_repair"
+		}
+	],
+	"settings": [
+		{
+			"type": "group",
+			"label": {
+				"en": "Address",
+				"nl": "Adres"
+			},
+			"children": [
+				{
+					"$extends": "ipaddress"
+				},
+				{
+					"$extends": "discovery_method"
+				},
+				{
+					"$extends": "discovery_interval"
+				}
+			]
+		}
+	]
+}

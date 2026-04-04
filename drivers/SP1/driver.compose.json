@@ -71,5 +71,8 @@
 				"title": { "en": "Switch off", "nl": "Schakelaar uit"}
 			}
 		]
-	}
+	},
+  "$extends": [
+    "general.settings"
+  ]
 }

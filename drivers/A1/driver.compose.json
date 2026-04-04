@@ -337,5 +337,8 @@
 			}
 		],
 		"actions": []
-	}
+	},
+	"$extends": [
+		"general.settings"
+	]
 }

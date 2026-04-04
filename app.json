@@ -2132,6 +2132,84 @@
   },
   "drivers": [
     {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Timing",
+            "nl": "Tijdschema"
+          },
+          "children": [
+            {
+              "id": "CheckInterval",
+              "type": "number",
+              "value": 5,
+              "label": {
+                "en": "Update Interval",
+                "nl": "Update Interval"
+              },
+              "hint": {
+                "en": "Time in minutes between reading of device status.",
+                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Address",
+            "nl": "Adres"
+          },
+          "children": [
+            {
+              "id": "ipAddress",
+              "type": "label",
+              "label": {
+                "en": "IP-address",
+                "nl": "IP-adres"
+              },
+              "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
+              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Maintainance",
+            "nl": "Onderhoud"
+          },
+          "children": [
+            {
+              "id": "Authenticate",
+              "type": "checkbox",
+              "value": false,
+              "label": {
+                "en": "Re-authenticate device",
+                "nl": "Apparaat opnieuw authenticeren"
+              }
+            }
+          ]
+        }
+      ],
       "id": "A1",
       "platforms": [
         "local"
@@ -2174,34 +2252,15 @@
           "id": "add_devices",
           "template": "add_devices"
         }
+      ]
+    },
+    {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
       ],
       "settings": [
-        {
-          "type": "group",
-          "label": {
-            "en": "Timing",
-            "nl": "Tijdschema"
-          },
-          "children": [
-            {
-              "id": "CheckInterval",
-              "type": "number",
-              "value": 5,
-              "label": {
-                "en": "Interval",
-                "nl": "Interval"
-              },
-              "hint": {
-                "en": "Time in minutes between reading of device status.",
-                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
-              },
-              "attr": {
-                "min": 1,
-                "max": 3600
-              }
-            }
-          ]
-        },
         {
           "type": "group",
           "label": {
@@ -2211,12 +2270,16 @@
           "children": [
             {
               "id": "ipAddress",
-              "type": "text",
+              "type": "label",
               "label": {
-                "en": "IP address",
-                "nl": "IP adres"
+                "en": "IP-address",
+                "nl": "IP-adres"
               },
               "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
               "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
             }
           ]
@@ -2239,9 +2302,7 @@
             }
           ]
         }
-      ]
-    },
-    {
+      ],
       "id": "Dooya",
       "platforms": [
         "local"
@@ -2320,136 +2381,12 @@
           "id": "add_devices",
           "template": "add_devices"
         }
-      ],
-      "settings": [
-        {
-          "type": "group",
-          "label": {
-            "en": "Address",
-            "nl": "Adres"
-          },
-          "children": [
-            {
-              "id": "ipAddress",
-              "type": "text",
-              "label": {
-                "en": "IP address",
-                "nl": "IP adres"
-              },
-              "value": "0.0.0.0",
-              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
-            }
-          ]
-        },
-        {
-          "type": "group",
-          "label": {
-            "en": "Maintainance",
-            "nl": "Onderhoud"
-          },
-          "children": [
-            {
-              "id": "Authenticate",
-              "type": "checkbox",
-              "value": false,
-              "label": {
-                "en": "Re-authenticate device",
-                "nl": "Apparaat opnieuw authenticeren"
-              }
-            }
-          ]
-        }
       ]
     },
     {
-      "id": "Hysen",
-      "platforms": [
-        "local"
-      ],
-      "connectivity": [
-        "lan"
-      ],
-      "name": {
-        "en": "Thermostat",
-        "nl": "Thermostaat"
-      },
-      "images": {
-        "large": "/drivers/Hysen/assets/images/large.jpg",
-        "small": "/drivers/Hysen/assets/images/small.jpg"
-      },
-      "class": "thermostat",
-      "capabilities": [
-        "measure_temperature.room",
-        "measure_temperature.outside",
-        "measure_temperature",
-        "target_temperature",
-        "parental_mode"
-      ],
-      "capabilitiesOptions": {
-        "measure_temperature.room": {
-          "title": {
-            "en": "Room",
-            "nl": "Binnen"
-          }
-        },
-        "measure_temperature.outside": {
-          "title": {
-            "en": "Outside",
-            "nl": "Buiten"
-          }
-        },
-        "target_temperature": {
-          "min": 5,
-          "max": 30,
-          "step": 0.5
-        }
-      },
-      "mobile": {
-        "components": [
-          {
-            "id": "icon",
-            "capabilities": []
-          },
-          {
-            "id": "toggle",
-            "capabilities": [
-              "parental_mode"
-            ],
-            "options": {
-              "showTitle": true
-            }
-          },
-          {
-            "id": "sensor",
-            "capabilities": [
-              "measure_temperature"
-            ]
-          },
-          {
-            "id": "thermostat",
-            "capabilities": [
-              "target_temperature"
-            ]
-          }
-        ]
-      },
-      "pair": [
+      "repair": [
         {
-          "id": "start"
-        },
-        {
-          "id": "list_devices",
-          "template": "list_devices",
-          "navigation": {
-            "next": "properties"
-          }
-        },
-        {
-          "id": "properties"
-        },
-        {
-          "id": "add_devices",
-          "template": "add_devices"
+          "id": "start_repair"
         }
       ],
       "settings": [
@@ -2910,8 +2847,8 @@
               "type": "number",
               "value": 5,
               "label": {
-                "en": "Interval",
-                "nl": "Interval"
+                "en": "Update Interval",
+                "nl": "Update Interval"
               },
               "hint": {
                 "en": "Time in minutes between reading of device status.",
@@ -2920,6 +2857,10 @@
               "attr": {
                 "min": 1,
                 "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
               }
             }
           ]
@@ -2933,12 +2874,16 @@
           "children": [
             {
               "id": "ipAddress",
-              "type": "text",
+              "type": "label",
               "label": {
-                "en": "IP address",
-                "nl": "IP adres"
+                "en": "IP-address",
+                "nl": "IP-adres"
               },
               "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
               "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
             }
           ]
@@ -2970,9 +2915,177 @@
             }
           ]
         }
+      ],
+      "id": "Hysen",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "name": {
+        "en": "Thermostat",
+        "nl": "Thermostaat"
+      },
+      "images": {
+        "large": "/drivers/Hysen/assets/images/large.jpg",
+        "small": "/drivers/Hysen/assets/images/small.jpg"
+      },
+      "class": "thermostat",
+      "capabilities": [
+        "measure_temperature.room",
+        "measure_temperature.outside",
+        "measure_temperature",
+        "target_temperature",
+        "parental_mode"
+      ],
+      "capabilitiesOptions": {
+        "measure_temperature.room": {
+          "title": {
+            "en": "Room",
+            "nl": "Binnen"
+          }
+        },
+        "measure_temperature.outside": {
+          "title": {
+            "en": "Outside",
+            "nl": "Buiten"
+          }
+        },
+        "target_temperature": {
+          "min": 5,
+          "max": 30,
+          "step": 0.5
+        }
+      },
+      "mobile": {
+        "components": [
+          {
+            "id": "icon",
+            "capabilities": []
+          },
+          {
+            "id": "toggle",
+            "capabilities": [
+              "parental_mode"
+            ],
+            "options": {
+              "showTitle": true
+            }
+          },
+          {
+            "id": "sensor",
+            "capabilities": [
+              "measure_temperature"
+            ]
+          },
+          {
+            "id": "thermostat",
+            "capabilities": [
+              "target_temperature"
+            ]
+          }
+        ]
+      },
+      "pair": [
+        {
+          "id": "start"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "properties"
+          }
+        },
+        {
+          "id": "properties"
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
       ]
     },
     {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Timing",
+            "nl": "Tijdschema"
+          },
+          "children": [
+            {
+              "id": "CheckInterval",
+              "type": "number",
+              "value": 5,
+              "label": {
+                "en": "Update Interval",
+                "nl": "Update Interval"
+              },
+              "hint": {
+                "en": "Time in minutes between reading of device status.",
+                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Address",
+            "nl": "Adres"
+          },
+          "children": [
+            {
+              "id": "ipAddress",
+              "type": "label",
+              "label": {
+                "en": "IP-address",
+                "nl": "IP-adres"
+              },
+              "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
+              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Maintainance",
+            "nl": "Onderhoud"
+          },
+          "children": [
+            {
+              "id": "Authenticate",
+              "type": "checkbox",
+              "value": false,
+              "label": {
+                "en": "Re-authenticate device",
+                "nl": "Apparaat opnieuw authenticeren"
+              }
+            }
+          ]
+        }
+      ],
       "id": "MP1",
       "platforms": [
         "local"
@@ -3079,34 +3192,15 @@
           "id": "add_devices",
           "template": "add_devices"
         }
+      ]
+    },
+    {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
       ],
       "settings": [
-        {
-          "type": "group",
-          "label": {
-            "en": "Timing",
-            "nl": "Tijdschema"
-          },
-          "children": [
-            {
-              "id": "CheckInterval",
-              "type": "number",
-              "value": 5,
-              "label": {
-                "en": "Interval",
-                "nl": "Interval"
-              },
-              "hint": {
-                "en": "Time in minutes between reading of device status.",
-                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
-              },
-              "attr": {
-                "min": 1,
-                "max": 3600
-              }
-            }
-          ]
-        },
         {
           "type": "group",
           "label": {
@@ -3116,38 +3210,70 @@
           "children": [
             {
               "id": "ipAddress",
-              "type": "text",
+              "type": "label",
               "label": {
-                "en": "IP address",
-                "nl": "IP adres"
+                "en": "IP-address",
+                "nl": "IP-adres"
               },
               "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
               "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
-            }
-          ]
-        },
-        {
-          "type": "group",
-          "label": {
-            "en": "Maintainance",
-            "nl": "Onderhoud"
-          },
-          "children": [
+            },
             {
-              "id": "Authenticate",
-              "type": "checkbox",
-              "value": false,
+              "id": "ip_assignment_mode",
+              "type": "dropdown",
               "label": {
-                "en": "Re-authenticate device",
-                "nl": "Apparaat opnieuw authenticeren"
+                "en": "Network Discovery",
+                "nl": "Netwerkontdekking"
+              },
+              "hint": {
+                "en": "Select the method for discovering the device's IP address",
+                "nl": "Selecteer de methode voor het ontdekken van het IP-adres van het apparaat"
+              },
+              "value": "manual",
+              "values": [
+                {
+                  "id": "automatic",
+                  "label": {
+                    "en": "Automagically",
+                    "nl": "Automagisch"
+                  }
+                },
+                {
+                  "id": "manual",
+                  "label": {
+                    "en": "Manual",
+                    "nl": "Handmatig"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "discovery_interval",
+              "type": "number",
+              "value": 10,
+              "label": {
+                "en": "Discovery Interval",
+                "nl": "Ontdekkingsinterval"
+              },
+              "hint": {
+                "en": "Time in minutes between device discovery attempts.",
+                "nl": "Tijd tussen pogingen om apparaten te ontdekken, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
               }
             }
           ]
-        }
-      ]
-    },
-    {
-      "settings": [
+        },
         {
           "id": "RcCmdGroup",
           "type": "group",
@@ -3613,26 +3739,37 @@
         {
           "type": "group",
           "label": {
-            "en": "Address",
-            "nl": "Adres"
+            "en": "Timing",
+            "nl": "Tijdschema"
           },
           "children": [
             {
-              "id": "ipAddress",
-              "type": "text",
+              "id": "CheckInterval",
+              "type": "number",
+              "value": 5,
               "label": {
-                "en": "IP address",
-                "nl": "IP adres"
+                "en": "Update Interval",
+                "nl": "Update Interval"
               },
-              "value": "0.0.0.0",
-              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+              "hint": {
+                "en": "Time in minutes between reading of device status.",
+                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
             }
           ]
         },
         {
           "type": "group",
           "label": {
-            "en": "Maintainance",
+            "en": "Maintenance",
             "nl": "Onderhoud"
           },
           "children": [
@@ -3686,7 +3823,85 @@
       ]
     },
     {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
+      ],
       "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Address",
+            "nl": "Adres"
+          },
+          "children": [
+            {
+              "id": "ipAddress",
+              "type": "label",
+              "label": {
+                "en": "IP-address",
+                "nl": "IP-adres"
+              },
+              "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
+              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+            },
+            {
+              "id": "ip_assignment_mode",
+              "type": "dropdown",
+              "label": {
+                "en": "Network Discovery",
+                "nl": "Netwerkontdekking"
+              },
+              "hint": {
+                "en": "Select the method for discovering the device's IP address",
+                "nl": "Selecteer de methode voor het ontdekken van het IP-adres van het apparaat"
+              },
+              "value": "manual",
+              "values": [
+                {
+                  "id": "automatic",
+                  "label": {
+                    "en": "Automagically",
+                    "nl": "Automagisch"
+                  }
+                },
+                {
+                  "id": "manual",
+                  "label": {
+                    "en": "Manual",
+                    "nl": "Handmatig"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "discovery_interval",
+              "type": "number",
+              "value": 10,
+              "label": {
+                "en": "Discovery Interval",
+                "nl": "Ontdekkingsinterval"
+              },
+              "hint": {
+                "en": "Time in minutes between device discovery attempts.",
+                "nl": "Tijd tussen pogingen om apparaten te ontdekken, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
+            }
+          ]
+        },
         {
           "id": "RcCmdGroup",
           "type": "group",
@@ -4152,26 +4367,37 @@
         {
           "type": "group",
           "label": {
-            "en": "Address",
-            "nl": "Adres"
+            "en": "Timing",
+            "nl": "Tijdschema"
           },
           "children": [
             {
-              "id": "ipAddress",
-              "type": "text",
+              "id": "CheckInterval",
+              "type": "number",
+              "value": 5,
               "label": {
-                "en": "IP address",
-                "nl": "IP adres"
+                "en": "Update Interval",
+                "nl": "Update Interval"
               },
-              "value": "0.0.0.0",
-              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+              "hint": {
+                "en": "Time in minutes between reading of device status.",
+                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
             }
           ]
         },
         {
           "type": "group",
           "label": {
-            "en": "Maintainance",
+            "en": "Maintenance",
             "nl": "Onderhoud"
           },
           "children": [
@@ -4225,7 +4451,85 @@
       ]
     },
     {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
+      ],
       "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Address",
+            "nl": "Adres"
+          },
+          "children": [
+            {
+              "id": "ipAddress",
+              "type": "label",
+              "label": {
+                "en": "IP-address",
+                "nl": "IP-adres"
+              },
+              "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
+              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+            },
+            {
+              "id": "ip_assignment_mode",
+              "type": "dropdown",
+              "label": {
+                "en": "Network Discovery",
+                "nl": "Netwerkontdekking"
+              },
+              "hint": {
+                "en": "Select the method for discovering the device's IP address",
+                "nl": "Selecteer de methode voor het ontdekken van het IP-adres van het apparaat"
+              },
+              "value": "manual",
+              "values": [
+                {
+                  "id": "automatic",
+                  "label": {
+                    "en": "Automagically",
+                    "nl": "Automagisch"
+                  }
+                },
+                {
+                  "id": "manual",
+                  "label": {
+                    "en": "Manual",
+                    "nl": "Handmatig"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "discovery_interval",
+              "type": "number",
+              "value": 10,
+              "label": {
+                "en": "Discovery Interval",
+                "nl": "Ontdekkingsinterval"
+              },
+              "hint": {
+                "en": "Time in minutes between device discovery attempts.",
+                "nl": "Tijd tussen pogingen om apparaten te ontdekken, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
+            }
+          ]
+        },
         {
           "id": "RcCmdGroup",
           "type": "group",
@@ -4691,26 +4995,37 @@
         {
           "type": "group",
           "label": {
-            "en": "Address",
-            "nl": "Adres"
+            "en": "Timing",
+            "nl": "Tijdschema"
           },
           "children": [
             {
-              "id": "ipAddress",
-              "type": "text",
+              "id": "CheckInterval",
+              "type": "number",
+              "value": 5,
               "label": {
-                "en": "IP address",
-                "nl": "IP adres"
+                "en": "Update Interval",
+                "nl": "Update Interval"
               },
-              "value": "0.0.0.0",
-              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+              "hint": {
+                "en": "Time in minutes between reading of device status.",
+                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
             }
           ]
         },
         {
           "type": "group",
           "label": {
-            "en": "Maintainance",
+            "en": "Maintenance",
             "nl": "Onderhoud"
           },
           "children": [
@@ -4768,7 +5083,85 @@
       ]
     },
     {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
+      ],
       "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Address",
+            "nl": "Adres"
+          },
+          "children": [
+            {
+              "id": "ipAddress",
+              "type": "label",
+              "label": {
+                "en": "IP-address",
+                "nl": "IP-adres"
+              },
+              "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
+              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+            },
+            {
+              "id": "ip_assignment_mode",
+              "type": "dropdown",
+              "label": {
+                "en": "Network Discovery",
+                "nl": "Netwerkontdekking"
+              },
+              "hint": {
+                "en": "Select the method for discovering the device's IP address",
+                "nl": "Selecteer de methode voor het ontdekken van het IP-adres van het apparaat"
+              },
+              "value": "manual",
+              "values": [
+                {
+                  "id": "automatic",
+                  "label": {
+                    "en": "Automagically",
+                    "nl": "Automagisch"
+                  }
+                },
+                {
+                  "id": "manual",
+                  "label": {
+                    "en": "Manual",
+                    "nl": "Handmatig"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "discovery_interval",
+              "type": "number",
+              "value": 10,
+              "label": {
+                "en": "Discovery Interval",
+                "nl": "Ontdekkingsinterval"
+              },
+              "hint": {
+                "en": "Time in minutes between device discovery attempts.",
+                "nl": "Tijd tussen pogingen om apparaten te ontdekken, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
+            }
+          ]
+        },
         {
           "id": "RcCmdGroup",
           "type": "group",
@@ -5234,26 +5627,37 @@
         {
           "type": "group",
           "label": {
-            "en": "Address",
-            "nl": "Adres"
+            "en": "Timing",
+            "nl": "Tijdschema"
           },
           "children": [
             {
-              "id": "ipAddress",
-              "type": "text",
+              "id": "CheckInterval",
+              "type": "number",
+              "value": 5,
               "label": {
-                "en": "IP address",
-                "nl": "IP adres"
+                "en": "Update Interval",
+                "nl": "Update Interval"
               },
-              "value": "0.0.0.0",
-              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+              "hint": {
+                "en": "Time in minutes between reading of device status.",
+                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
             }
           ]
         },
         {
           "type": "group",
           "label": {
-            "en": "Maintainance",
+            "en": "Maintenance",
             "nl": "Onderhoud"
           },
           "children": [
@@ -5327,7 +5731,85 @@
       ]
     },
     {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
+      ],
       "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Address",
+            "nl": "Adres"
+          },
+          "children": [
+            {
+              "id": "ipAddress",
+              "type": "label",
+              "label": {
+                "en": "IP-address",
+                "nl": "IP-adres"
+              },
+              "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
+              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+            },
+            {
+              "id": "ip_assignment_mode",
+              "type": "dropdown",
+              "label": {
+                "en": "Network Discovery",
+                "nl": "Netwerkontdekking"
+              },
+              "hint": {
+                "en": "Select the method for discovering the device's IP address",
+                "nl": "Selecteer de methode voor het ontdekken van het IP-adres van het apparaat"
+              },
+              "value": "manual",
+              "values": [
+                {
+                  "id": "automatic",
+                  "label": {
+                    "en": "Automagically",
+                    "nl": "Automagisch"
+                  }
+                },
+                {
+                  "id": "manual",
+                  "label": {
+                    "en": "Manual",
+                    "nl": "Handmatig"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "discovery_interval",
+              "type": "number",
+              "value": 10,
+              "label": {
+                "en": "Discovery Interval",
+                "nl": "Ontdekkingsinterval"
+              },
+              "hint": {
+                "en": "Time in minutes between device discovery attempts.",
+                "nl": "Tijd tussen pogingen om apparaten te ontdekken, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
+            }
+          ]
+        },
         {
           "id": "RcCmdGroup",
           "type": "group",
@@ -5793,26 +6275,37 @@
         {
           "type": "group",
           "label": {
-            "en": "Address",
-            "nl": "Adres"
+            "en": "Timing",
+            "nl": "Tijdschema"
           },
           "children": [
             {
-              "id": "ipAddress",
-              "type": "text",
+              "id": "CheckInterval",
+              "type": "number",
+              "value": 5,
               "label": {
-                "en": "IP address",
-                "nl": "IP adres"
+                "en": "Update Interval",
+                "nl": "Update Interval"
               },
-              "value": "0.0.0.0",
-              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+              "hint": {
+                "en": "Time in minutes between reading of device status.",
+                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
             }
           ]
         },
         {
           "type": "group",
           "label": {
-            "en": "Maintainance",
+            "en": "Maintenance",
             "nl": "Onderhoud"
           },
           "children": [
@@ -5886,6 +6379,54 @@
       ]
     },
     {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Address",
+            "nl": "Adres"
+          },
+          "children": [
+            {
+              "id": "ipAddress",
+              "type": "label",
+              "label": {
+                "en": "IP-address",
+                "nl": "IP-adres"
+              },
+              "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
+              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Maintainance",
+            "nl": "Onderhoud"
+          },
+          "children": [
+            {
+              "id": "Authenticate",
+              "type": "checkbox",
+              "value": false,
+              "label": {
+                "en": "Re-authenticate device",
+                "nl": "Apparaat opnieuw authenticeren"
+              }
+            }
+          ]
+        }
+      ],
       "id": "SP1",
       "platforms": [
         "local"
@@ -5933,8 +6474,45 @@
           "id": "add_devices",
           "template": "add_devices"
         }
+      ]
+    },
+    {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
       ],
       "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Timing",
+            "nl": "Tijdschema"
+          },
+          "children": [
+            {
+              "id": "CheckInterval",
+              "type": "number",
+              "value": 5,
+              "label": {
+                "en": "Update Interval",
+                "nl": "Update Interval"
+              },
+              "hint": {
+                "en": "Time in minutes between reading of device status.",
+                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
+              },
+              "attr": {
+                "min": 1,
+                "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
+              }
+            }
+          ]
+        },
         {
           "type": "group",
           "label": {
@@ -5944,12 +6522,16 @@
           "children": [
             {
               "id": "ipAddress",
-              "type": "text",
+              "type": "label",
               "label": {
-                "en": "IP address",
-                "nl": "IP adres"
+                "en": "IP-address",
+                "nl": "IP-adres"
               },
               "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
               "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
             }
           ]
@@ -5972,9 +6554,7 @@
             }
           ]
         }
-      ]
-    },
-    {
+      ],
       "id": "SP2",
       "platforms": [
         "local"
@@ -6056,6 +6636,13 @@
           "id": "add_devices",
           "template": "add_devices"
         }
+      ]
+    },
+    {
+      "repair": [
+        {
+          "id": "start_repair"
+        }
       ],
       "settings": [
         {
@@ -6070,8 +6657,8 @@
               "type": "number",
               "value": 5,
               "label": {
-                "en": "Interval",
-                "nl": "Interval"
+                "en": "Update Interval",
+                "nl": "Update Interval"
               },
               "hint": {
                 "en": "Time in minutes between reading of device status.",
@@ -6080,6 +6667,10 @@
               "attr": {
                 "min": 1,
                 "max": 3600
+              },
+              "units": {
+                "en": "minutes",
+                "nl": "minuten"
               }
             }
           ]
@@ -6093,12 +6684,16 @@
           "children": [
             {
               "id": "ipAddress",
-              "type": "text",
+              "type": "label",
               "label": {
-                "en": "IP address",
-                "nl": "IP adres"
+                "en": "IP-address",
+                "nl": "IP-adres"
               },
               "value": "0.0.0.0",
+              "hint": {
+                "en": "The IP-address of the device. This is discovered automatically, but can be changed via the repair section if the device has a static IP address.",
+                "nl": "Het IP-adres van het apparaat. Dit wordt automatisch ontdekt, maar kan worden aangepast via de reparatiesectie als het apparaat een statisch IP-adres heeft."
+              },
               "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
             }
           ]
@@ -6121,9 +6716,7 @@
             }
           ]
         }
-      ]
-    },
-    {
+      ],
       "id": "SP3S",
       "platforms": [
         "local"
@@ -6204,71 +6797,6 @@
         {
           "id": "add_devices",
           "template": "add_devices"
-        }
-      ],
-      "settings": [
-        {
-          "type": "group",
-          "label": {
-            "en": "Timing",
-            "nl": "Tijdschema"
-          },
-          "children": [
-            {
-              "id": "CheckInterval",
-              "type": "number",
-              "value": 5,
-              "label": {
-                "en": "Interval",
-                "nl": "Interval"
-              },
-              "hint": {
-                "en": "Time in minutes between reading of device status.",
-                "nl": "Tijd tussen het lezen van de apparaatstatus, in minuten."
-              },
-              "attr": {
-                "min": 1,
-                "max": 3600
-              }
-            }
-          ]
-        },
-        {
-          "type": "group",
-          "label": {
-            "en": "Address",
-            "nl": "Adres"
-          },
-          "children": [
-            {
-              "id": "ipAddress",
-              "type": "text",
-              "label": {
-                "en": "IP address",
-                "nl": "IP adres"
-              },
-              "value": "0.0.0.0",
-              "pattern": "^([1-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.(([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){2}([0-9]|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])$"
-            }
-          ]
-        },
-        {
-          "type": "group",
-          "label": {
-            "en": "Maintainance",
-            "nl": "Onderhoud"
-          },
-          "children": [
-            {
-              "id": "Authenticate",
-              "type": "checkbox",
-              "value": false,
-              "label": {
-                "en": "Re-authenticate device",
-                "nl": "Apparaat opnieuw authenticeren"
-              }
-            }
-          ]
         }
       ]
     }

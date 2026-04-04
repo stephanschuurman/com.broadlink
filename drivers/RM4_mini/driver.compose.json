@@ -17,8 +17,8 @@
   ],
   "pair": [
     {
-      "$template": "start",
-      "id": "start"
+      "id": "start",
+      "$template": "start"
     },
     {
       "id": "list_devices",
