@@ -67,6 +67,7 @@
    const addressInput = document.getElementById('address');
    const applyButton = document.getElementById('applyBtn');
    const errorMessage = document.getElementById('broadlink-error');
+   let homeyIp = '';
 
    // If statement for local testing without Homey
    if (typeof Homey !== "undefined") {
@@ -84,7 +85,7 @@
       if (isManual) {
          addressInput.focus();
       } else {
-         addressInput.value = '';
+         addressInput.value = homeyIp ? homeyIp.split('.').slice(0, 3).join('.') + '.' : '';
       }
    }
 
@@ -124,16 +125,21 @@
       const mode = getDiscoveryMode();
       const ipAddress = addressInput.value.trim();
 
+      errorMessage.textContent = '';
+      applyButton.classList.add('is-loading');
+
       if (mode === 'manual' && !isValidIPv4(ipAddress)) {
          if (typeof Homey !== 'undefined') {
             await Homey.alert(Homey.__('pair.invalid_ipaddress'));
          }
          addressInput.focus();
+         applyButton.classList.remove('is-loading');
          return;
       }
 
       try {
          const discoveredDevices = await Homey.emit('start_discover', { address: mode === 'manual' ? ipAddress : null, timeout: TIMEOUT_MS }, null) || [];
+         applyButton.classList.remove('is-loading');
 
          if (discoveredDevices.filter((d) => d.isCompatible).length > 0) {
             Homey.showView('list_devices');
@@ -151,7 +157,6 @@
       }
    }
 
-
    // Add event listeners to radio buttons
    radios.forEach((radio) => {
       radio.addEventListener('change', syncDiscoveryUi);
@@ -161,19 +166,10 @@
 
    void syncDiscoveryUi();
 
-   Homey.on('discovered', function (deviceData) {
-      const mode = getDiscoveryMode();
-
-      if (deviceData && deviceData.length > 0) {
-         const hasCompatible = deviceData.some(d => d.isCompatible);
-         if (hasCompatible) {
-            Homey.showView('list_devices');
-         } else {
-            renderDiscoveryError(mode, deviceData);
-         }
-      } else {
-         renderDiscoveryError(mode, []);
-      }
-   });
+   // Load Homey's IP address asynchronously as possible to pre-fill the manual input and speed up discovery
+   Homey.emit('get_homey_ip').then(ip => {
+      homeyIp = ip;
+      syncDiscoveryUi();
+    }).catch(() => {});
 
 </script>
