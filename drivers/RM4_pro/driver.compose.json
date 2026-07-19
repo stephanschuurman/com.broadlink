@@ -1,8 +1,10 @@
 {
   "id": "RM4_pro",
+  "platforms": ["local"],
+  "connectivity": ["lan"],
   "name": {
-    "en": "RM4 Pro / RM Max",
-    "nl": "RM4 Pro / RM Max"
+    "en": "RM4 Pro",
+    "nl": "RM4 Pro"
   },
   "images": {
     "large": ".{{driverAssetsPath}}/images/large.jpg",
@@ -72,6 +74,10 @@
         },
         "args": [
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -96,6 +102,10 @@
         },
         "args": [
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {

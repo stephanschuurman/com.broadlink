@@ -1,5 +1,7 @@
 {
 	"id": "SP2",
+	"platforms": ["local"],
+	"connectivity": ["lan"],
 	"name": {
 		"en": "SP2"
 	},
@@ -111,6 +113,8 @@
 				"title": { "en": "Nightlight off", "nl": "Nachtlicht uit"}
 			}
 		]
-	}
-	
+	},
+  "$extends": [
+    "general.settings"
+  ]
 }

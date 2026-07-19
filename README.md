@@ -1,24 +1,28 @@
 # Homey
 
-Use [Homey](https://www.athom.com/) together with [Broadlink devices](http://www.ibroadlink.com/).
+Use [Homey](https://www.athom.com/) together with [BroadLink devices](http://www.ibroadlink.com/).
 
-# Supported devices
+# Supported Devices
 
 * [A1](http://www.ibroadlink.com/a1/) - Environment Sensor
-* [RM3 mini](http://www.ibroadlink.com/rmMini3/)
-  The RM3 Mini is a wifi to IR (infrared) device. It can learn IR commands and transmit them.
+* [RM3 Mini](http://www.ibroadlink.com/rmMini3/) Black/Red
+  * The RM3 Mini is a wifi to IR (infrared) device. It can learn IR commands and transmit them.
+* RM4 Mini - IR
+* RM4 Pro - IR + RF 
+* [RM5+](https://www.ibroadlink.com/product_2) - IR
 * [RM Pro](http://www.ibroadlink.com/rmPro)  - IR
 * [RM Pro Plus](http://www.ibroadlink.com/rmPro+)   - IR + RF
-* RM4 Pro / RM Max - IR + RF
-* SP1  - power socket switch
-* SP2  - power socket switch with nightlight and meter
-* SP3S - power socket switch with meter
-* MP1 - 4 way power socket switch
-* Hysen - thermostat. this is an oem device, also available with other brandnames,
-           such as [Beok](http://www.beok-controls.com/product.asp)
+* SP1  - Power socket switch
+* SP2  - Power socket switch with nightlight and power meter
+* SP3S - Power socket switch with meter
+* MP1 - 4-way Power socket switch
+* Hysen - thermostat.
+  * This is an oem device, also available with other brandnames, such as [Beok](http://www.beok-controls.com/product.asp).
 * Dooya - [motorized curtain](http://en.dooya.com/products_3.html)
 
-Others might follow...
+Note that the new **RM Max** features native Matter support.
+
+**Others might follow...**
 
 # Debug and Error log
 
@@ -43,8 +47,8 @@ Protocol:
 
 # NodeJS modules
 
-requires the following NodeJS modules
-* dgram
+Requires the following NodeJS modules
+* broadlink-ir-converter
 * crc
 
 # app.json
@@ -55,6 +59,6 @@ In order to create a full app.json, open a commandline (i.e. terminal):
  > cd com.broadlink
  > athom app validate
 
-# Version
+# Installation & Version
 
 See <https://homey.app/en-us/app/com.broadlink/Broadlink/> for Changelog

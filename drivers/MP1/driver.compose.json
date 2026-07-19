@@ -1,5 +1,7 @@
 {
   "id": "MP1",
+  "platforms": ["local"],
+  "connectivity": ["lan"],
   "name": {
     "en": "MP1"
   },
@@ -69,6 +71,7 @@
         },
         "args": [
           {
+            "title": { "en": "Switch", "nl": "Schakelaar" },
             "name": "switchID",
             "type": "dropdown",
             "values": [
@@ -98,6 +101,7 @@
         },
         "args": [
           {
+            "title": { "en": "Switch", "nl": "Schakelaar" },
             "name": "switchID",
             "type": "dropdown",
             "values": [
@@ -127,6 +131,7 @@
         },
         "args": [
           {
+            "title": { "en": "Switch", "nl": "Schakelaar" },
             "name": "switchID",
             "type": "dropdown",
             "values": [
@@ -161,6 +166,7 @@
         },
         "args": [
           {
+            "title": { "en": "Switch", "nl": "Schakelaar" },
             "type": "dropdown",
             "name": "switchID",
             "values": [
@@ -192,6 +198,7 @@
         },
         "args": [
           {
+            "title": { "en": "Switch", "nl": "Schakelaar" },
             "type": "dropdown",
             "name": "switchID",
             "values": [
@@ -221,6 +228,7 @@
         },
         "args": [
           {
+            "title": { "en": "Switch", "nl": "Schakelaar" },
             "type": "dropdown",
             "name": "switchID",
             "values": [
@@ -242,5 +250,8 @@
         ]
       }
     ]
-  }
+  },
+  "$extends": [
+    "general.settings"
+  ]
 }

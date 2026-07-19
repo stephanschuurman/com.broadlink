@@ -24,7 +24,7 @@
     "intro": "Configureer het apparaat met de Broadlink / e-Control app op een smartphone, zorg ervoor dat het NIET vergrendeld is.<br>Verkrijg het IP-adres van uw wifi-router.",
     "cancel": "Stop",
     "add": "Toevoegen",
-    "address": "IP address",
+    "address": "IP adres",
     "error_no_discover": "Geen apparaat gevonden. Is het apparaat aan, en is het verbonden met het Wifi netwerk ?",
     "found_another": "Ander apparaat gevonden: __dev__ (__type__)",
     "invalid_ipaddress": "Ongeldig IP adres",
@@ -33,7 +33,13 @@
     "properties": "Eigenschappen",
     "select_device": "Selecteer het apparaat",
     "next": "Volgende &gt;",
-    "error_device_locked": "Apparaat is vergrendeld. Ontgrendel het apparaat in de Broadlink-app en probeer het opnieuw."
+    "error_device_locked": "Apparaat is vergrendeld. Ontgrendel het apparaat in de Broadlink-app en probeer het opnieuw.",
+    "subtitle": "Bereid het apparaat voor met de BroadLink app",
+    "tip": "Tip: Koppel het apparaat eerst aan uw Wi-Fi netwerk via de BroadLink of e-Control app. Zorg ervoor dat het apparaat NIET vergrendeld is — dit kan gebeuren wanneer het aan een kamer wordt toegewezen.",
+    "manual_tip": "Verkrijg het IP-adres van uw wifi-router.",
+    "automatic_discovery": "Automatisch Zoeken",
+    "manual": "Handmatig",
+    "auto_discover_failed": "Automatisch zoeken mislukt. Voer het IP-adres handmatig in."
   },
   "settings": {
     "title": "Broadlink Debug Instellingen",
@@ -77,5 +83,18 @@
   "common": {
     "yes": "Ja",
     "no": "Nee"
+  },
+  "repair": {
+    "title": "Herstel Broadlink Apparaat",
+    "subtitle": "Problemen oplossen met uw apparaat",
+    "network_settings": "Netwerkinstellingen",
+    "discovery_options": "Ontdekkingsopties",
+    "automatic": "Automatisch",
+    "manual": "Handmatig",
+    "address": "Statisch IP-adres",
+    "invalid_ipaddress": "Voer een geldig IPv4-adres in",
+    "rediscover_failed": "Apparaat opnieuw ontdekken mislukt",
+    "apply": "OK",
+    "save_failed": "Opslaan mislukt"
   }
 }

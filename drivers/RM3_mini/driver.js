@@ -23,6 +23,10 @@ const BroadlinkDriver = require("./../../lib/BroadlinkDriver");
 const DeviceInfo = require("./../../lib/DeviceInfo.js");
 const BroadlinkType = DeviceInfo.BroadlinkType;
 
+// Module-level flag: shared across all instances and subclasses (RM_plus, RM_pro).
+// Flow cards are global singletons — registering listeners more than once causes warnings.
+let _rm3miniFlowCardsRegistered = false;
+
 class BroadlinkRM3miniDriver extends BroadlinkDriver {
   async onInit(options = {}) {
     if (!options.CompatibilityID) {
@@ -30,6 +34,11 @@ class BroadlinkRM3miniDriver extends BroadlinkDriver {
       options.CompatibilityID = BroadlinkType.RM; // Set default CompatibilityID
     }
     super.onInit(options);
+
+    // this._utils.debugLog(this, "BroadlinkRM3miniDriver initialized with options:", options);
+
+    if (_rm3miniFlowCardsRegistered) return;
+    _rm3miniFlowCardsRegistered = true;
 
     this.rm3mini_action_send_cmd = this.homey.flow.getActionCard("send_command_rm3mini");
     this.rm3mini_action_send_cmd

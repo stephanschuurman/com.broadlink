@@ -1,5 +1,7 @@
 {
 	"id": "A1",
+	"platforms": ["local"],
+	"connectivity": ["lan"],
 	"name": {
 		"en": "A1",
 		"nl": "A1"
@@ -120,6 +122,10 @@
 				},
 				"args": [
 					{
+						"title": {
+							"en": "Air Quality",
+							"nl": "Luchtkwaliteit"
+						},
 						"name": "variable",
 						"type": "autocomplete",
 						"placeholder": {
@@ -141,6 +147,10 @@
 				},
 				"args": [
 					{
+						"title": {
+							"en": "Air Quality",
+							"nl": "Luchtkwaliteit"
+						},
 						"name": "variable",
 						"type": "autocomplete",
 						"placeholder": {
@@ -162,6 +172,10 @@
 				},
 				"args": [
 					{
+						"title": {
+							"en": "Air Quality",
+							"nl": "Luchtkwaliteit"
+						},
 						"name": "variable",
 						"type": "autocomplete",
 						"placeholder": {
@@ -183,6 +197,10 @@
 				},
 				"args": [
 					{
+						"title": {
+							"en": "Light Level",
+							"nl": "Lichtniveau"
+						},
 						"name": "variable",
 						"type": "autocomplete",
 						"placeholder": {
@@ -204,6 +222,10 @@
 				},
 				"args": [
 					{
+						"title": {
+							"en": "Light Level",
+							"nl": "Lichtniveau"
+						},
 						"name": "variable",
 						"type": "autocomplete",
 						"placeholder": {
@@ -225,6 +247,10 @@
 				},
 				"args": [
 					{
+						"title": {
+							"en": "Light Level",
+							"nl": "Lichtniveau"
+						},
 						"name": "variable",
 						"type": "autocomplete",
 						"placeholder": {
@@ -246,6 +272,10 @@
 				},
 				"args": [
 					{
+						"title": {
+							"en": "Noise Level",
+							"nl": "Geluidsniveau"
+						},
 						"name": "variable",
 						"type": "autocomplete",
 						"placeholder": {
@@ -267,6 +297,10 @@
 				},
 				"args": [
 					{
+						"title": {
+							"en": "Noise Level",
+							"nl": "Geluidsniveau"
+						},
 						"name": "variable",
 						"type": "autocomplete",
 						"placeholder": {
@@ -288,6 +322,10 @@
 				},
 				"args": [
 					{
+						"title": {
+							"en": "Noise Level",
+							"nl": "Geluidsniveau"
+						},
 						"name": "variable",
 						"type": "autocomplete",
 						"placeholder": {
@@ -299,5 +337,8 @@
 			}
 		],
 		"actions": []
-	}
+	},
+	"$extends": [
+		"general.settings"
+	]
 }

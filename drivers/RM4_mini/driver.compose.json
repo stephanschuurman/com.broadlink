@@ -1,8 +1,10 @@
 {
   "id": "RM4_mini",
+  "platforms": ["local"],
+  "connectivity": ["lan"],
   "name": {
-    "en": "RM4 Mini / RM5 Plus",
-    "nl": "RM4 Mini / RM5 Plus"
+    "en": "RM4 Mini & RM5 Plus",
+    "nl": "RM4 Mini & RM5 Plus"
   },
   "images": {
     "large": ".{{driverAssetsPath}}/images/large.jpg",
@@ -15,8 +17,8 @@
   ],
   "pair": [
     {
-      "$template": "start",
-      "id": "start"
+      "id": "start",
+      "$template": "start"
     },
     {
       "id": "list_devices",

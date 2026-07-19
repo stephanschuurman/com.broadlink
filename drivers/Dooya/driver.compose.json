@@ -1,5 +1,7 @@
 {
 	"id": "Dooya",
+	"platforms": ["local"],
+	"connectivity": ["lan"],
 	"name": {
 		"en": "Dooya curtain controler",
 		"nl": "Dooya gordijn controller"
@@ -95,5 +97,8 @@
 				}
 			}
 		]
-	}
+	},
+  "$extends": [
+    "general.settings"
+  ]
 }

@@ -1,5 +1,7 @@
 {
 	"id": "SP3S",
+	"platforms": ["local"],
+	"connectivity": ["lan"],
 	"name": {
 		"en": "SP3S"
 	},
@@ -111,5 +113,8 @@
 				"title": { "en": "Nightlight off", "nl": "Nachtlicht uit"}
 			}
 		]
-	}
+	},
+  "$extends": [
+    "general.settings"
+  ]
 }

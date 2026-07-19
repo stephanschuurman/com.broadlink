@@ -1,0 +1,29 @@
+{
+	"id": "ip_assignment_mode",
+	"type": "dropdown",
+	"label": {
+		"en": "Network Discovery",
+		"nl": "Netwerkontdekking"
+	},
+	"hint": {
+		"en": "Select the method for discovering the device's IP address",
+		"nl": "Selecteer de methode voor het ontdekken van het IP-adres van het apparaat"
+	},
+	"value": "manual",
+	"values": [
+		{
+			"id": "automatic",
+			"label": {
+				"en": "Automagically",
+				"nl": "Automagisch"
+			}
+		},
+		{
+			"id": "manual",
+			"label": {
+				"en": "Manual",
+				"nl": "Handmatig"
+			}
+		}
+	]
+}

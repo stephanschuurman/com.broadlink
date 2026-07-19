@@ -1,5 +1,7 @@
 {
   "id": "RM_plus",
+  "platforms": ["local"],
+  "connectivity": ["lan"],
   "name": {
     "en": "RM Pro Plus",
     "nl": "RM Pro Plus"
@@ -77,6 +79,10 @@
         },
         "args": [
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": { "en": "name", "nl": "naam" }
@@ -98,6 +104,10 @@
         },
         "args": [
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {

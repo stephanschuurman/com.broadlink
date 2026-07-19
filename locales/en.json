@@ -33,7 +33,13 @@
     "properties": "Properties",
     "select_device": "Select device",
     "next": "Next &gt;",
-    "error_device_locked": "Device is locked. Please unlock the device in the Broadlink app and try again."
+    "error_device_locked": "Device is locked. Please unlock the device in the Broadlink app and try again.",
+    "subtitle": "Prepare the device with the Broadlink app",
+    "tip": "Tip: First connect the device to your Wi-Fi network using the BroadLink or e-Control app. Make sure the device is NOT locked — this can happen when it is assigned to a room.",
+    "manual_tip": "Get the IP address from your wifi router.",
+    "automatic_discovery": "Automatic Discovery",
+    "manual": "Manual",
+    "auto_discover_failed": "Auto discovery failed. Please enter the IP address manually."
   },
   "settings": {
     "title": "Broadlink Debug Settings",
@@ -77,5 +83,18 @@
   "common": {
     "yes": "Yes",
     "no": "No"
+  },
+  "repair": {
+    "title": "Repair Broadlink Device",
+    "subtitle": "Troubleshooting your device",
+    "network_settings": "Network Settings",
+    "discovery_options": "Discovery Options",
+    "automatic": "Automatic",
+    "manual": "Manual",
+    "address": "Static IP-address",
+    "invalid_ipaddress": "Please enter a valid IPv4 address",
+    "rediscover_failed": "Device rediscovery failed",
+    "apply": "OK",
+    "save_failed": "Saving failed"
   }
 }

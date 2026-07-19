@@ -1,0 +1,100 @@
+{
+	"repair": [
+		{
+			"id": "start_repair",
+			"$template": "start_repair"
+		}
+	],
+	"settings": [
+		{
+			"type": "group",
+			"label": {
+				"en": "Address",
+				"nl": "Adres"
+			},
+			"children": [
+				{
+					"$extends": "ipaddress"
+				},
+				{
+					"$extends": "discovery_method"
+				},
+				{
+					"$extends": "discovery_interval"
+				}
+			]
+		},
+		{
+			"type": "group",
+			"label": {
+				"en": "Device Info",
+				"nl": "Apparaatinfo"
+			},
+			"children": [
+				{
+					"id": "mac_address",
+					"type": "label",
+					"label": {
+						"en": "MAC address",
+						"nl": "MAC-adres"
+					},
+					"value": ""
+				},
+				{
+					"id": "firmware_version",
+					"type": "label",
+					"label": {
+						"en": "Firmware version",
+						"nl": "Firmwareversie"
+					},
+					"value": ""
+				},
+				{
+					"id": "profile_version",
+					"type": "label",
+					"label": {
+						"en": "Profile version",
+						"nl": "Profielversie"
+					},
+					"value": ""
+				},
+				{
+					"id": "device_type",
+					"type": "label",
+					"label": {
+						"en": "Type",
+						"nl": "Type"
+					},
+					"value": ""
+				},
+				{
+					"id": "device_id",
+					"type": "label",
+					"label": {
+						"en": "ID",
+						"nl": "ID"
+					},
+					"value": ""
+				},
+				{
+					"id": "devname",
+					"type": "text",
+					"label": {
+						"en": "Name",
+						"nl": "Naam"
+					},
+					"value": ""
+				},
+				{
+					"id": "devlocked",
+					"type": "label",
+					"label": {
+						"en": "Locked",
+						"nl": "Vergrendeld"
+					},
+					"value": ""
+				}
+			]
+		}
+	]
+}
