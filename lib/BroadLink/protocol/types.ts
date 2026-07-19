@@ -55,20 +55,64 @@ export interface BroadlinkHeader {
 export type BroadlinkPayload =
   | BroadlinkPayloadHelloResponse
   | BroadlinkPayloadAuthCommand
+  | BroadlinkPayloadAuthResponse
+  | BroadlinkPayloadCommandRequest
+  | BroadlinkPayloadCommandResponse
   | Buffer;
 
 /**
- * Interface representing the payload of an Auth Command Response (0x65) packet from a Broadlink device. 
- * The length of the payload is 0x50 bytes???, totally 0x80 bytes ??? including the header.
+ * Interface representing the plaintext payload of an Auth Command (0x65) packet.
  *
- * The Auth Command Response packet is sent by a Broadlink device in response to an Auth Command packet.
- * It contains information about the device, such as its ID, type, IP address, MAC address, name, and lock status.
+ * The payload is AES-128-CBC encrypted on the wire (default key/IV) and preceded by the
+ * Command Extended Header. It identifies the client to the device; the device answers
+ * with an Auth Response (0x3e9) containing the assigned device ID and session key.
  *
  * @interface BroadlinkPayloadAuthCommand
  */
 export interface BroadlinkPayloadAuthCommand {
   payloadType:      PayloadType.Command.Auth;  // discriminant
-  deviceId:         number;  // 4-byte Device ID
+  deviceIdentifier: string;  // 16-byte client identifier (e.g. IMEI-like), zero-padded ASCII
+  clientName:       string;  // 32-byte NULL-terminated ASCII client name
+  authBlob:         Buffer;  // 16-byte auth blob
+  metadata:         string;  // JSON string with cloud server info (may be empty)
+}
+
+/**
+ * Interface representing the plaintext payload of an Auth Response (0x3e9) packet.
+ *
+ * Contains the device ID assigned to this client (to be used in the extended header of all
+ * subsequent packets) and the per-session AES key that replaces the default key.
+ *
+ * @interface BroadlinkPayloadAuthResponse
+ */
+export interface BroadlinkPayloadAuthResponse {
+  payloadType: PayloadType.Response.Auth;  // discriminant
+  deviceId:    number;  // 4-byte assigned device ID
+  sessionKey:  Buffer;  // 16-byte AES session key
+}
+
+/**
+ * Interface representing the plaintext payload of a Command Request (0x6a) packet
+ * in the "new" format (RM3*, RM4 and RM5): inner length + command + data.
+ *
+ * @interface BroadlinkPayloadCommandRequest
+ */
+export interface BroadlinkPayloadCommandRequest {
+  payloadType: PayloadType.Command.Command;  // discriminant
+  command:     number;  // LE uint32 operation, see PayloadType.RMCommand
+  data:        Buffer;  // command-specific data
+}
+
+/**
+ * Interface representing the plaintext payload of a Command Response (0x3ee) packet
+ * in the "new" format (RM3*, RM4 and RM5). Same layout as the request.
+ *
+ * @interface BroadlinkPayloadCommandResponse
+ */
+export interface BroadlinkPayloadCommandResponse {
+  payloadType: PayloadType.Response.Command;  // discriminant
+  command:     number;  // LE uint32, echoes the operation
+  data:        Buffer;  // command-specific data (e.g. captured IR code)
 }
 
 
@@ -111,6 +155,7 @@ export interface BroadlinkPayloadHelloResponse {
 export namespace PayloadType {
 
   export const enum Command {
+    Ping      = 0x01,  // keepalive/heartbeat, basic header only, no response
     Hello     = 0x06,
     Discover  = 0x1a,
     Join      = 0x14,  // This seems not to be common - join request from device to client, or join response from client to device
@@ -122,6 +167,7 @@ export namespace PayloadType {
     Hello     = 0x07,
     Discover  = 0x1b,
     Join      = 0x15,
+    JoinError = 0x398, // sent when a Join Request is received but the device is already connected to WiFi
     Auth      = 0x3e9,
     Command   = 0x3ee,
   }
@@ -136,6 +182,25 @@ export namespace PayloadType {
 
 export const enum ResponseStatus {
   OK = 0x0000,
+}
+
+/**
+ * Error codes as returned in the Error Code field (0x22-0x23) of the basic header.
+ * The field is a *signed* LE int16; 0 means success.
+ */
+export const enum ErrorCode {
+  Success              = 0,
+  AuthenticationFailed = -1,
+  LoggedOut            = -2,
+  DeviceOffline        = -3,
+  CommandNotSupported  = -4,
+  StorageFull          = -5,
+  StructureAbnormal    = -6,
+  ControlKeyExpired    = -7,
+  SendError            = -8,
+  WriteError           = -9,
+  ReadError            = -10,
+  SsidNotFound         = -11,
 }
 
 

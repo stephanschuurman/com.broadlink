@@ -12,6 +12,7 @@ External reference material for the BroadLink LAN/cloud protocol, related tools,
 
 ## Tools
 
+- [Flipper Zero](https://flipper.net/products/flipper-zero) — Portable multi-tool for capturing, analyzing and replaying IR and sub-GHz RF (433/315 MHz) signals; handy for verifying codes learned or sent by BroadLink devices.
 - [python-broadlink](https://github.com/mjg59/python-broadlink/) — Best starting point: a Python library with a good [protocol description](https://github.com/mjg59/python-broadlink/blob/master/protocol.md).
 - [broadlink-dissector](https://github.com/stephanschuurman/broadlink-dissector) — A new (and my own) Wireshark dissector for the BroadLink protocol, including detailed protocol documentation.
 - [Sensus](https://pasthev.github.io/sensus/) — Online conversion and analysis tool for IR formats (Pronto hex, Broadlink hex, Tuya, …).

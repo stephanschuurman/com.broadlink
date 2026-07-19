@@ -114,8 +114,8 @@ export abstract class BroadlinkPacketBase implements BroadlinkPacket {
 
     // ── 0x20-0x21: see below, calculated after payload is in place ──
 
-    // ── 0x22-0x23: error code (LE uint16) ──
-    buf.writeUInt16LE(this.header.errorCode, 0x22);
+    // ── 0x22-0x23: error code (signed LE int16, 0 = success) ──
+    buf.writeInt16LE(this.header.errorCode, 0x22);
 
     // ── 0x24-0x25: device type (LE uint16) ──
     buf.writeUInt16LE(this.header.deviceType, 0x24);
@@ -160,7 +160,7 @@ export abstract class BroadlinkPacketBase implements BroadlinkPacket {
     this.header.srcIp = `${buf[0x18]}.${buf[0x19]}.${buf[0x1a]}.${buf[0x1b]}`;
     this.header.srcPort = buf.readUInt16LE(0x1c);
     this.header.checksum = buf.readUInt16LE(0x20);
-    this.header.errorCode = buf.readUInt16LE(0x22);
+    this.header.errorCode = buf.readInt16LE(0x22);
     this.header.deviceType = buf.readUInt16LE(0x24);
     this.header.payloadType = buf.readUInt16LE(0x26);
     this.header.packetCount = buf.readUInt16LE(0x28);
@@ -168,7 +168,10 @@ export abstract class BroadlinkPacketBase implements BroadlinkPacket {
                              .map(o => buf[o].toString(16).padStart(2, '0'))
                              .join(':');
     this.decodePayload(buf.subarray(0x30, buf.length));
-    this.header.checksumValid = (buf.readUInt16LE(0x20) === BroadlinkPacketBase.calculateChecksum(buf));
+    // The checksum is calculated with the checksum field itself set to zero,
+    // so exclude bytes 0x20-0x21 from the sum before comparing.
+    const calculated = (BroadlinkPacketBase.calculateChecksum(buf) - buf[0x20] - buf[0x21] + 0x20000) & 0xffff;
+    this.header.checksumValid = (this.header.checksum === calculated);
   }
 
   // ── Convenience getters and static methods ------
@@ -243,7 +246,7 @@ export abstract class BroadlinkPacketBase implements BroadlinkPacket {
       srcIp:       `${buf[0x18]}.${buf[0x19]}.${buf[0x1a]}.${buf[0x1b]}`,
       srcPort:     buf.readUInt16LE(0x1c),
       checksum:    buf.readUInt16LE(0x20),
-      errorCode:   buf.readUInt16LE(0x22),
+      errorCode:   buf.readInt16LE(0x22),
       deviceType:  buf.readUInt16LE(0x24),
       payloadType: buf.readUInt16LE(0x26),
       packetCount: buf.readUInt16LE(0x28),

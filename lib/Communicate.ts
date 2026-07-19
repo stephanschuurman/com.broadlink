@@ -24,10 +24,15 @@
 "use strict";
 
 const dgram = require("dgram");
-const crypto = require("crypto");
 const BroadlinkUtils = require("./BroadlinkUtils.js");
 
-import { HelloCommandPacket, HelloResponsePacket } from './BroadLink/protocol';
+import {
+  HelloCommandPacket,
+  HelloResponsePacket,
+  AuthCommandPacket,
+  AuthResponsePacket,
+  RawEncryptedPacket,
+} from './BroadLink/protocol';
 
 const MAX_LOG_LENGTH = 500; // Maximum length of the logged response
 
@@ -74,6 +79,8 @@ class Communicate {
   onAuthSuccess: ((id: Uint8Array, key: Uint8Array) => void) | null = null;
   _sendBusy: Promise<void> = Promise.resolve();
   _expectedCount: number | null = null;
+  // Cached BROADLINK_TEST_IP from env.json; undefined = not read yet, null = not set
+  static _testIpOverride: string | null | undefined = undefined;
 
   /**
    * Serialize requests on the shared socket: only one request/response
@@ -140,9 +147,10 @@ class Communicate {
   }
 
   /**
-   * Update the IPaddress.
+   * Update the IPaddress. No-op (and no log) when the address is unchanged.
    */
   setIPaddress(address: string) {
+    if (address === this.ipAddress) return;
     this.ipAddress = address;
     this._utils.debugLog(this, `IP Address updated to: ${this.ipAddress}`);
   }
@@ -238,75 +246,28 @@ class Communicate {
    *
    * @return [Buffer] with response message
    */
-  async send_packet(command: number, version: boolean, payload: Uint8Array, _authRetried = false): Promise<any> {
+  async send_packet(command: number, version: boolean, payload: Uint8Array, _authRetried = false, attempts = 2): Promise<any> {
     this._utils.debugLog(this, "->send_packet: payload=" + this._utils.asHex(payload));
     const originalPayload = payload;
 
     this.count = (this.count + 1) & 0xffff;
     const packetCount = this.count;
-    let packet = new Uint8Array(0x38);
-    packet[0x00] = 0x5a;
-    packet[0x01] = 0xa5;
-    packet[0x02] = 0xaa;
-    packet[0x03] = 0x55;
-    packet[0x04] = 0x5a;
-    packet[0x05] = 0xa5;
-    packet[0x06] = 0xaa;
-    packet[0x07] = 0x55;
-    // Based pm https://github.com/kiwi-cam/broadlinkjs-rm/blob/master/index.js#L406-L407 // https://github.com/kiwi-cam/broadlinkjs-rm/
-    //packet[0x24] = version ? 0x9d : 0x2a;
-    //packet[0x25] = 0x27;
-    packet[0x24] = this.deviceType & 0xff
-    packet[0x25] = this.deviceType >> 8
-    packet[0x26] = command;
-    packet[0x28] = packetCount & 0xff;
-    packet[0x29] = packetCount >> 8;
-    // https://github.com/kiwi-cam/broadlinkjs-rm/commit/5fdb5ed5988080f2774385e75b1477871420dad7
-    // check, test !!!! Is it inline with other implementations ?
-    packet[0x2a] = this.mac[5];
-    packet[0x2b] = this.mac[4];
-    packet[0x2c] = this.mac[3];
-    packet[0x2d] = this.mac[2];
-    packet[0x2e] = this.mac[1];
-    packet[0x2f] = this.mac[0];
-    packet[0x30] = this.id[0];
-    packet[0x31] = this.id[1];
-    packet[0x32] = this.id[2];
-    packet[0x33] = this.id[3];
 
-
-    // pad the payload for AES encryption, should be in in multiples of 16 bytes
-    if (payload.length > 0) {
-      var numpad = (Math.trunc(payload.length / 16) + 1) * 16 - payload.length;
-      payload = this._utils.concatTypedArrays(payload, new Uint8Array(numpad));
-    }
-
-    // calculate the checksum over the payload
-    let checksum = 0xbeaf;
-    let i = 0;
-    for (i = 0; i < payload.length; i++) {
-      checksum = checksum + payload[i];
-      checksum = checksum & 0xffff;
-    }
-
-    // add checksum of payload to header
-    packet[0x34] = checksum & 0xff;
-    packet[0x35] = checksum >> 8;
-
-    // encrypt payload
-    payload = this.encrypt(payload);
-
-    // concatinate header and payload
-    packet = this._utils.concatTypedArrays(packet, payload);
-
-    // calculate checksum of entire packet, add to header
-    checksum = 0xbeaf;
-    for (i = 0; i < packet.length; i++) {
-      checksum += packet[i];
-      checksum = checksum & 0xffff;
-    }
-    packet[0x20] = checksum & 0xff;
-    packet[0x21] = checksum >> 8;
+    // Build the request with the packet classes: the basic header, extended
+    // header (device id + payload checksum) and the AES-128-CBC encryption of
+    // the payload are all handled by RawEncryptedPacket.
+    const request = new RawEncryptedPacket(command);
+    request.header.deviceType = this.deviceType;
+    request.header.packetCount = packetCount;
+    // Legacy behaviour: the MAC address is written to the wire in reversed byte order
+    request.header.macAddress = Array.from(this.mac)
+      .reverse()
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join(":");
+    request.deviceId = (this.id[0] | (this.id[1] << 8) | (this.id[2] << 16) | (this.id[3] << 24)) >>> 0;
+    request.key = Buffer.from(this.key);
+    request.payload = Buffer.from(payload);
+    const packet = request.toBuffer();
 
     // send packet with a single retry; the lock serializes exchanges on the
     // shared socket so responses cannot cross between concurrent callers
@@ -314,7 +275,7 @@ class Communicate {
     let response;
     let lastError;
     try {
-      for (let attempt = 1; attempt <= 2; attempt++) {
+      for (let attempt = 1; attempt <= attempts; attempt++) {
         try {
           response = await this.sendto(packet, this.ipAddress, 80, 5, packetCount);
           lastError = null;
@@ -323,7 +284,7 @@ class Communicate {
           lastError = err;
           const message = err instanceof Error ? err.message : String(err);
           this._utils.debugLog(this, `send_packet attempt ${attempt} error: ${message}`);
-          if (attempt < 2) {
+          if (attempt < attempts) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
           }
         }
@@ -352,12 +313,16 @@ class Communicate {
     }
 
     if (response) {
+      // Keep the unsigned error semantics used by callers (e.g. 0xfffb in _check_data)
       response.error = response.data[0x22] | (response.data[0x23] << 8);
       if (response.error == 0) {
         this._utils.debugLog(this, " No error received, error code : " + response.error);
-        let r = this.decrypt(response.data.slice(0x38)); // remove 0x38 bytes from start of array, then decrypt
-        response.cmd = r.slice(0, 4); // get first 4 bytes in array
-        response.payload = r.slice(0x04); // remove first 4 bytes of array
+        // Parse (and decrypt) the response with the packet classes; the
+        // plaintext still contains the AES zero padding, as callers expect
+        const responsePacket = RawEncryptedPacket.from(Buffer.from(response.data), Buffer.from(this.key));
+        const r = responsePacket.payload;
+        response.cmd = new Uint8Array(r.subarray(0, 4)); // get first 4 bytes in array
+        response.payload = new Uint8Array(r.subarray(0x04)); // remove first 4 bytes of array
 
         this._utils.debugLog(
           this,
@@ -378,7 +343,7 @@ class Communicate {
         try {
           const authData = await this.auth();
           if (this.onAuthSuccess) this.onAuthSuccess(authData.id, authData.key);
-          return this.send_packet(command, version, originalPayload, true);
+          return this.send_packet(command, version, originalPayload, true, attempts);
         } catch (authErr) {
           const msg = authErr instanceof Error ? authErr.message : String(authErr);
           this._utils.debugLog(this, `send_packet: re-auth failed: ${msg}`);
@@ -396,41 +361,6 @@ class Communicate {
   }
 
   /**
-   * Encrypt data with AES, 128 bits, in CBC mode.
-   * Use previously configured key and iv (Initial Vector).
-   *
-   * @return [Buffer]
-   */
-  encrypt(payload: Uint8Array): Uint8Array {
-    this._utils.debugLog(this, "->encrypt: key=[redacted, " + this.key.length + " bytes] iv=[redacted] payload=" + this._utils.asHex(payload));
-    var encipher = crypto.createCipheriv("aes-128-cbc", this.key, this.iv);
-    let encryptdata = encipher.update(payload, "binary", "binary");
-    let encode_encryptdata = Buffer.from(encryptdata, "binary");
-
-    return new Uint8Array(encode_encryptdata);
-  }
-
-  /**
-   * Decrypt data with AES, 128 bits, in CBC mode.
-   * Use previously configured key and iv (Initial Vector).
-   *
-   * @return [Buffer]
-   */
-  decrypt(payload: Uint8Array): Uint8Array {
-    var decipher = crypto.createDecipheriv("aes-128-cbc", this.key, this.iv);
-    decipher.setAutoPadding(false);
-    let decoded = "";
-
-    for (var i = 0; i < payload.length; i += 16) {
-      decoded += decipher.update(payload.slice(i, i + 16), "binary", "binary");
-    }
-    decoded += decipher.final("binary");
-    var result = new Uint8Array(Buffer.from(decoded, "binary"));
-
-    return result;
-  }
-
-  /**
    * Authenticate device.
    * - encrypt/decrypt keys are default ones.
    * - from response, the encrypt/decrypt keys for further communication can be retrieved.
@@ -444,17 +374,12 @@ class Communicate {
     this.key = new Uint8Array(DEFAULT_KEY.match(/.{2}/g)!.map(byte => parseInt(byte, 16)));
     this.iv = new Uint8Array(DEFAULT_VECT.match(/.{2}/g)!.map(byte => parseInt(byte, 16)));
 
-    var payload = new Uint8Array(0x50);
-    payload.fill(0x31, 0x04, 0x13);
-    payload[0x1e] = 0x01;
-    payload[0x2d] = 0x01;
-    payload[0x30] = "T".charCodeAt(0);
-    payload[0x31] = "e".charCodeAt(0);
-    payload[0x32] = "s".charCodeAt(0);
-    payload[0x33] = "t".charCodeAt(0);
-    payload[0x34] = " ".charCodeAt(0);
-    payload[0x35] = " ".charCodeAt(0);
-    payload[0x36] = "1".charCodeAt(0);
+    // Build the auth payload with the packet class (device identifier of 15
+    // ASCII '1's and client name "Test  1", matching the previous behaviour)
+    const authCommand = new AuthCommandPacket();
+    authCommand.payload.deviceIdentifier = "111111111111111";
+    authCommand.payload.clientName = "Test  1";
+    const payload = new Uint8Array(authCommand.encodePlainPayload());
 
     // auth command = 0x65, version = false; _authRetried = true so a failed
     // auth can never trigger another re-auth (infinite recursion)
@@ -464,12 +389,16 @@ class Communicate {
       throw new Error(this.homey.__("errors.decrypt_payload"));
     }
 
-    var key = response.payload.slice(0, 0x10); // get at most 16 bytes
+    // Parse the response with the packet class: device id + 16-byte session key
+    const authResponse = AuthResponsePacket.from(Buffer.from(response.data));
+    const key = new Uint8Array(authResponse.sessionKey);
     if (key.length % 16 != 0) {
       this._utils.debugLog(this, "**> auth: keylength error");
       throw new Error(this.homey.__("errors.decrypt_keylength") + key.length);
     }
-    var id = response.cmd;
+    const idBuffer = Buffer.alloc(4);
+    idBuffer.writeUInt32LE(authResponse.payload.deviceId, 0);
+    const id = new Uint8Array(idBuffer);
     this.id = id;
     this.key = key;
     let authData = {
@@ -487,15 +416,6 @@ class Communicate {
     this._utils.debugLog(this, `<== auth: auth data : id: ${authDataFormatted.id}, key: ${authDataFormatted.key}`);
 
     return authData;
-  }
-
-  /**
-   * Get day-of-week, where Monday=1 and Sunday=7
-   */
-  getIsoWeekday(dateObj) {
-    let wd = dateObj.getDay();
-    if (wd == 0) wd = 7; // Sunday should be '7'
-    return wd;
   }
 
   /**
@@ -519,9 +439,13 @@ class Communicate {
 
     // Allow overriding the target IP via env.json (useful when broadcasts are blocked, e.g. in Docker/homey app run)
     // Add { "BROADLINK_TEST_IP": "192.168.1.xxx" } to env.json in the project root
-    const Homey = require('homey');
-    if (Homey.env.BROADLINK_TEST_IP) {
-      device_ip_address = Homey.env.BROADLINK_TEST_IP;
+    // Read once and cache: the SDK warns on every access of an unset env variable
+    if (Communicate._testIpOverride === undefined) {
+      const Homey = require('homey');
+      Communicate._testIpOverride = Homey.env.BROADLINK_TEST_IP || null;
+    }
+    if (Communicate._testIpOverride) {
+      device_ip_address = Communicate._testIpOverride;
       this._utils.debugLog(this, `[discover] BROADLINK_TEST_IP override: ${device_ip_address}`);
     }
 
@@ -530,70 +454,9 @@ class Communicate {
 
     var port = 44488; // any random port will do.
 
-    // convert to array
-    var address = local_ip_address.split(".");
-
-    var packet = new Uint8Array(0x30);
-    var d = new Date();
-
-    // get timezone offset without DaylightSavingTime
-    let jan = new Date(d.getFullYear(), 0, 1); // Date of 1-jan of this year
-    var timezone = jan.getTimezoneOffset() / -60; // timezone in hours difference, without DST
-
-    var year = d.getFullYear();
-
-    // Magic header
-    packet[0x00] = 0x5a;
-    packet[0x01] = 0xa5;
-    packet[0x02] = 0xaa;
-    packet[0x03] = 0x55;
-    packet[0x04] = 0x5a;
-    packet[0x05] = 0xa5;
-    packet[0x06] = 0xaa;
-    packet[0x07] = 0x55;
-
-    if (timezone < 0) {
-      packet[0x08] = 0xff + timezone - 1;
-      packet[0x09] = 0xff;
-      packet[0x0a] = 0xff;
-      packet[0x0b] = 0xff;
-    } else {
-      packet[0x08] = timezone;
-      packet[0x09] = 0;
-      packet[0x0a] = 0;
-      packet[0x0b] = 0;
-    }
-    packet[0x0c] = year & 0xff;
-    packet[0x0d] = (year >> 8) & 0xff;
-    packet[0x0e] = d.getMinutes();
-    packet[0x0f] = d.getHours();
-    packet[0x10] = Number(year % 100);
-    packet[0x11] = this.getIsoWeekday(d);
-    packet[0x12] = d.getDate();
-    packet[0x13] = d.getMonth() + 1;
-    packet[0x18] = Number(address[0]);
-    packet[0x19] = Number(address[1]);
-    packet[0x1a] = Number(address[2]);
-    packet[0x1b] = Number(address[3]);
-    packet[0x1c] = port & 0xff;
-    packet[0x1d] = port >> 8;
-    packet[0x26] = 6; // hello
-
-    // calculate checksum over header
-    var checksum = 0xbeaf;
-    let i = 0;
-    for (i = 0; i < 0x30; i++) {
-      checksum = checksum + packet[i];
-    }
-    checksum = checksum & 0xffff;
-
-    // add checksum to header
-    packet[0x20] = checksum & 0xff;
-    packet[0x21] = (checksum >> 8) & 0xff;
-
+    // Build the hello (discovery) packet with the packet class
     const helloPacket = new HelloCommandPacket(local_ip_address, port);
-    // this._utils.debugLog(this, `[discover] byte-by-byte diff (packet vs DiscoveryPacket):\n` +
-    //   HelloCommandPacket.diff(packet, helloPacket.toUint8Array(), 'packet', 'new'));
+    const packet = helloPacket.toBuffer();
 
     // Set start time for discovery to calculate response times of devices
     const startNs = process.hrtime.bigint();
@@ -613,15 +476,6 @@ class Communicate {
           this._utils.debugLog(this, `==> Communicate.discover - sent broadcast to ${device_ip_address}`);
         });
       });
-
-      //       const normalizeMac = (value) => (value || "").toString().replace(/[^a-fA-F0-9]/g, "").toUpperCase();
-      // const targetMac = normalizeMac(mac);
-
-      // const matchingDevice = broadLinkDevicesFound.find((device) => {
-      //   const foundMac = this._utils.arrToHex(device.mac);
-      //   const foundMacReversed = this._utils.arrToHex(Array.from(device.mac).reverse());
-      //   return normalizeMac(foundMac) === targetMac || normalizeMac(foundMacReversed) === targetMac;
-      // });
 
       sock.on("message", (msg, rinfo) => {
         this._utils.debugLog(this, `<== Communicate.discover - response from ${rinfo.address}:${rinfo.port}`);
@@ -758,14 +612,16 @@ class Communicate {
    *
    */
   async _check_data(payload) {
-    const maxAttempts = 8;
+    const maxAttempts = 15; // ~30s window: enough time to grab a remote and press
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       this._utils.debugLog(this, `_check_data - attempt ${attempt}/${maxAttempts}`);
 
       // send_packet does not throw on a socket timeout (it returns error -1),
-      // so a lost poll simply falls through to the next attempt
-      const response = await this.send_packet(0x6a, false, payload);
+      // so a lost poll simply falls through to the next attempt. Single
+      // attempt per poll: this loop is the retry, and the device goes silent
+      // while it is busy capturing
+      const response = await this.send_packet(0x6a, false, payload, false, 1);
       if (response && response.error === 0) {
         this._utils.debugLog(this, "**> _check_data resp = " + this._utils.asHex(response.payload));
         return response.payload;
