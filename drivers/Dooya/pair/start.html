@@ -141,6 +141,10 @@
          const discoveredDevices = await Homey.emit('start_discover', { address: mode === 'manual' ? ipAddress : null, timeout: TIMEOUT_MS }, null) || [];
          applyButton.classList.remove('is-loading');
 
+         if (discoveredDevices.filter((d) => d.isLocked).length > 0) {
+            await Homey.alert(Homey.__('pair.error_device_locked'));
+         }
+
          if (discoveredDevices.filter((d) => d.isCompatible).length > 0) {
             Homey.showView('list_devices');
          } else if (discoveredDevices.filter((d) => d.isCompatible).length === 0) {

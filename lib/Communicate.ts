@@ -1,7 +1,7 @@
 /**
  * Driver for Broadlink devices
  *
- * Copyright 2018-2019, R Wensveen
+ * Copyright 2018-2019, R Wensveen + S Schuurman (stephanschuurman.com)
  *
  * This file is part of com.broadlink
  * com.broadlink is free software: you can redistribute it and/or modify
@@ -26,7 +26,21 @@
 const dgram = require("dgram");
 const crypto = require("crypto");
 const BroadlinkUtils = require("./BroadlinkUtils.js");
+
+import { HelloCommandPacket, HelloResponsePacket } from './BroadLink/protocol';
+
 const MAX_LOG_LENGTH = 500; // Maximum length of the logged response
+
+// Constants for initial key and vector, as used in the authentication process
+const DEFAULT_KEY = "097628343fe99e23765c1513accf8b02";
+const DEFAULT_VECT = "562e17996d093d28ddb3ba695a2e6f58";
+
+// Constants for default network settings
+const DEFAULT_BCAST_ADDR = "255.255.255.255";
+const DEFAULT_PORT = 80;
+const DEFAULT_RETRY_INTVL = 1;
+const DEFAULT_TIMEOUT = 10;
+
 
 type SendCallback = {
   resolve: (value: any) => void;
@@ -46,17 +60,37 @@ type CommunicateOptions = {
 class Communicate {
   count = 0;
   deviceType = 0;
-  ipAddress = "255.255.255.255";
+  ipAddress = DEFAULT_BCAST_ADDR;
   id = new Uint8Array([0, 0, 0, 0]);
   mac = new Uint8Array([0, 0, 0, 0, 0, 0]);
-  key = new Uint8Array([0x09, 0x76, 0x28, 0x34, 0x3f, 0xe9, 0x9e, 0x23, 0x76, 0x5c, 0x15, 0x13, 0xac, 0xcf, 0x8b, 0x02]);
-  iv = new Uint8Array([0x56, 0x2e, 0x17, 0x99, 0x6d, 0x09, 0x3d, 0x28, 0xdd, 0xb3, 0xba, 0x69, 0x5a, 0x2e, 0x6f, 0x58]);
+  key = new Uint8Array(DEFAULT_KEY.match(/.{2}/g)!.map(byte => parseInt(byte, 16)));
+  iv = new Uint8Array(DEFAULT_VECT.match(/.{2}/g)!.map(byte => parseInt(byte, 16)));
   checkRepeatCount = 0;
   homey: any;
   _utils: any;
   dgramSocket: any;
   tm: any;
   callback: SendCallback | null = null;
+  onAuthSuccess: ((id: Uint8Array, key: Uint8Array) => void) | null = null;
+  _sendBusy: Promise<void> = Promise.resolve();
+  _expectedCount: number | null = null;
+
+  /**
+   * Serialize requests on the shared socket: only one request/response
+   * exchange may be in flight at a time, otherwise responses can end up
+   * resolving the wrong caller's promise.
+   *
+   * @return release function to call when the exchange is done
+   */
+  async _acquireSendLock(): Promise<() => void> {
+    const previous = this._sendBusy;
+    let release: () => void = () => undefined;
+    this._sendBusy = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await previous;
+    return release;
+  }
 
   /**
    * options = { count: this.count,			// integer
@@ -99,9 +133,9 @@ class Communicate {
     if (options.key && options.key.length == 16) {
       this.key = new Uint8Array(options.key);
     } else {
-      this.key = new Uint8Array([0x09, 0x76, 0x28, 0x34, 0x3f, 0xe9, 0x9e, 0x23, 0x76, 0x5c, 0x15, 0x13, 0xac, 0xcf, 0x8b, 0x02]);
+      this.key = new Uint8Array(DEFAULT_KEY.match(/.{2}/g)!.map(byte => parseInt(byte, 16)));
     }
-    this.iv = new Uint8Array([0x56, 0x2e, 0x17, 0x99, 0x6d, 0x09, 0x3d, 0x28, 0xdd, 0xb3, 0xba, 0x69, 0x5a, 0x2e, 0x6f, 0x58]);
+    this.iv = new Uint8Array(DEFAULT_VECT.match(/.{2}/g)!.map(byte => parseInt(byte, 16)));
     this.checkRepeatCount = 0;
   }
 
@@ -130,7 +164,8 @@ class Communicate {
    *
    * @return [Promise]
    */
-  async sendto(packet: Uint8Array, ipaddress: string, port: number, timeout: number): Promise<any> {
+  async sendto(packet: Uint8Array, ipaddress: string, port: number, timeout: number, expectedCount: number | null = null): Promise<any> {
+    this._expectedCount = expectedCount;
     if (this.dgramSocket === undefined) {
       this._utils.debugLog(this, "==> Communicate.sendto - create socket", packet, ipaddress, port);
       this.callback = {
@@ -152,6 +187,15 @@ class Communicate {
       });
 
       this.dgramSocket.on("message", (msg, rinfo) => {
+        // A delayed answer to an earlier (timed-out) request must not resolve
+        // the current one; the response echoes the packet count at 0x28-0x29
+        if (this._expectedCount !== null && msg.length >= 0x2a) {
+          const countEcho = msg[0x28] | (msg[0x29] << 8);
+          if (countEcho !== this._expectedCount) {
+            this._utils.debugLog(this, `<== Communicate.sendto - stale response (count ${countEcho}, expected ${this._expectedCount}), ignoring`);
+            return;
+          }
+        }
         clearTimeout(this.tm);
         this.tm = undefined;
         let rsp = {
@@ -194,10 +238,12 @@ class Communicate {
    *
    * @return [Buffer] with response message
    */
-  async send_packet(command: number, version: boolean, payload: Uint8Array): Promise<any> {
+  async send_packet(command: number, version: boolean, payload: Uint8Array, _authRetried = false): Promise<any> {
     this._utils.debugLog(this, "->send_packet: payload=" + this._utils.asHex(payload));
+    const originalPayload = payload;
 
     this.count = (this.count + 1) & 0xffff;
+    const packetCount = this.count;
     let packet = new Uint8Array(0x38);
     packet[0x00] = 0x5a;
     packet[0x01] = 0xa5;
@@ -207,14 +253,14 @@ class Communicate {
     packet[0x05] = 0xa5;
     packet[0x06] = 0xaa;
     packet[0x07] = 0x55;
-    // Based pm https://github.com/kiwi-cam/broadlinkjs-rm/blob/master/index.js#L406-L407
+    // Based pm https://github.com/kiwi-cam/broadlinkjs-rm/blob/master/index.js#L406-L407 // https://github.com/kiwi-cam/broadlinkjs-rm/
     //packet[0x24] = version ? 0x9d : 0x2a;
     //packet[0x25] = 0x27;
     packet[0x24] = this.deviceType & 0xff
     packet[0x25] = this.deviceType >> 8
     packet[0x26] = command;
-    packet[0x28] = this.count & 0xff;
-    packet[0x29] = this.count >> 8;
+    packet[0x28] = packetCount & 0xff;
+    packet[0x29] = packetCount >> 8;
     // https://github.com/kiwi-cam/broadlinkjs-rm/commit/5fdb5ed5988080f2774385e75b1477871420dad7
     // check, test !!!! Is it inline with other implementations ?
     packet[0x2a] = this.mac[5];
@@ -262,22 +308,28 @@ class Communicate {
     packet[0x20] = checksum & 0xff;
     packet[0x21] = checksum >> 8;
 
-    // send packet with a single retry after 5 seconds
+    // send packet with a single retry; the lock serializes exchanges on the
+    // shared socket so responses cannot cross between concurrent callers
+    const releaseSendLock = await this._acquireSendLock();
     let response;
     let lastError;
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      try {
-        response = await this.sendto(packet, this.ipAddress, 80, 20);
-        lastError = null;
-        break;
-      } catch (err) {
-        lastError = err;
-        const message = err instanceof Error ? err.message : String(err);
-        this._utils.debugLog(this, `send_packet attempt ${attempt} error: ${message}`);
-        if (attempt < 2) {
-          await new Promise((resolve) => setTimeout(resolve, 5000));
+    try {
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          response = await this.sendto(packet, this.ipAddress, 80, 5, packetCount);
+          lastError = null;
+          break;
+        } catch (err) {
+          lastError = err;
+          const message = err instanceof Error ? err.message : String(err);
+          this._utils.debugLog(this, `send_packet attempt ${attempt} error: ${message}`);
+          if (attempt < 2) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
         }
       }
+    } finally {
+      releaseSendLock();
     }
     if (lastError) {
       const message = lastError instanceof Error ? lastError.message : String(lastError);
@@ -321,6 +373,16 @@ class Communicate {
             ? this._utils.asHex(response.payload).substring(0, MAX_LOG_LENGTH) + "..."
             : this._utils.asHex(response.payload))
         );
+      } else if (response.error === 0xfff9 && !_authRetried) {
+        this._utils.debugLog(this, `send_packet: auth error (0x${response.error.toString(16)}), re-authenticating...`);
+        try {
+          const authData = await this.auth();
+          if (this.onAuthSuccess) this.onAuthSuccess(authData.id, authData.key);
+          return this.send_packet(command, version, originalPayload, true);
+        } catch (authErr) {
+          const msg = authErr instanceof Error ? authErr.message : String(authErr);
+          this._utils.debugLog(this, `send_packet: re-auth failed: ${msg}`);
+        }
       } else {
         this._utils.debugLog(this, ` We got error, code = 0x${(response.error).toString(16).padStart(4, '0')}`);
       }
@@ -340,7 +402,7 @@ class Communicate {
    * @return [Buffer]
    */
   encrypt(payload: Uint8Array): Uint8Array {
-    this._utils.debugLog(this, "->encrypt: key=" + this._utils.asHex(this.key) + " iv=" + this._utils.asHex(this.iv) + " payload=" + this._utils.asHex(payload));
+    this._utils.debugLog(this, "->encrypt: key=[redacted, " + this.key.length + " bytes] iv=[redacted] payload=" + this._utils.asHex(payload));
     var encipher = crypto.createCipheriv("aes-128-cbc", this.key, this.iv);
     let encryptdata = encipher.update(payload, "binary", "binary");
     let encode_encryptdata = Buffer.from(encryptdata, "binary");
@@ -376,22 +438,14 @@ class Communicate {
    * @return  key and id
    */
   async auth() {
+    // The auth packet must be encrypted with the default key/iv and sent with
+    // device id 0; the device responds with a new session key and id.
+    this.id = new Uint8Array([0, 0, 0, 0]);
+    this.key = new Uint8Array(DEFAULT_KEY.match(/.{2}/g)!.map(byte => parseInt(byte, 16)));
+    this.iv = new Uint8Array(DEFAULT_VECT.match(/.{2}/g)!.map(byte => parseInt(byte, 16)));
+
     var payload = new Uint8Array(0x50);
-    payload[0x04] = 0x31;
-    payload[0x05] = 0x31;
-    payload[0x06] = 0x31;
-    payload[0x07] = 0x31;
-    payload[0x08] = 0x31;
-    payload[0x09] = 0x31;
-    payload[0x0a] = 0x31;
-    payload[0x0b] = 0x31;
-    payload[0x0c] = 0x31;
-    payload[0x0d] = 0x31;
-    payload[0x0e] = 0x31;
-    payload[0x0f] = 0x31;
-    payload[0x10] = 0x31;
-    payload[0x11] = 0x31;
-    payload[0x12] = 0x31;
+    payload.fill(0x31, 0x04, 0x13);
     payload[0x1e] = 0x01;
     payload[0x2d] = 0x01;
     payload[0x30] = "T".charCodeAt(0);
@@ -402,7 +456,9 @@ class Communicate {
     payload[0x35] = " ".charCodeAt(0);
     payload[0x36] = "1".charCodeAt(0);
 
-    let response = await this.send_packet(0x65, false, payload);
+    // auth command = 0x65, version = false; _authRetried = true so a failed
+    // auth can never trigger another re-auth (infinite recursion)
+    let response = await this.send_packet(0x65, false, payload, true);
     if (!response || !response.payload) {
       this._utils.debugLog(this, "**> auth: decrypt payload error");
       throw new Error(this.homey.__("errors.decrypt_payload"));
@@ -420,14 +476,12 @@ class Communicate {
       id: id,
       key: key,
     };
-    // Format the authentication data manually for logging
+    // Format the authentication data manually for logging (key redacted)
     const authDataFormatted = {
       id: Array.from(this.id)
         .map((byte) => byte.toString(16).padStart(2, "0"))
         .join(""),
-      key: Array.from(this.key)
-        .map((byte) => byte.toString(16).padStart(2, "0"))
-        .join(""),
+      key: `[redacted, ${this.key.length} bytes]`,
     };
 
     this._utils.debugLog(this, `<== auth: auth data : id: ${authDataFormatted.id}, key: ${authDataFormatted.key}`);
@@ -460,13 +514,19 @@ class Communicate {
     }
 
     // if not given, use broadcast address
-    if (device_ip_address == null) {
+    if (device_ip_address == null) 
       device_ip_address = "255.255.255.255";
-      device_ip_address = "192.168.1.194"; // for testing only --------------------------
+
+    // Allow overriding the target IP via env.json (useful when broadcasts are blocked, e.g. in Docker/homey app run)
+    // Add { "BROADLINK_TEST_IP": "192.168.1.xxx" } to env.json in the project root
+    const Homey = require('homey');
+    if (Homey.env.BROADLINK_TEST_IP) {
+      device_ip_address = Homey.env.BROADLINK_TEST_IP;
+      this._utils.debugLog(this, `[discover] BROADLINK_TEST_IP override: ${device_ip_address}`);
     }
 
-    //this._utils.debugLog(this, "\n****\n****  OVERRIDE IP ADDRESS IN DISCOVER\n****")
-    //local_ip_address = "192.168.0.40"
+    // Resolve immediately for unicast (specific IP); wait full timeout for broadcast to collect all devices
+    let isBroadcast = device_ip_address === "255.255.255.255" || device_ip_address === "224.0.0.251";
 
     var port = 44488; // any random port will do.
 
@@ -517,7 +577,7 @@ class Communicate {
     packet[0x1b] = Number(address[3]);
     packet[0x1c] = port & 0xff;
     packet[0x1d] = port >> 8;
-    packet[0x26] = 6;
+    packet[0x26] = 6; // hello
 
     // calculate checksum over header
     var checksum = 0xbeaf;
@@ -530,6 +590,10 @@ class Communicate {
     // add checksum to header
     packet[0x20] = checksum & 0xff;
     packet[0x21] = (checksum >> 8) & 0xff;
+
+    const helloPacket = new HelloCommandPacket(local_ip_address, port);
+    // this._utils.debugLog(this, `[discover] byte-by-byte diff (packet vs DiscoveryPacket):\n` +
+    //   HelloCommandPacket.diff(packet, helloPacket.toUint8Array(), 'packet', 'new'));
 
     // Set start time for discovery to calculate response times of devices
     const startNs = process.hrtime.bigint();
@@ -574,21 +638,36 @@ class Communicate {
         //   return;
         // }
 
+        const helloPacketResponse = HelloResponsePacket.from(msg);
+
+        this._utils.debugLog(this, "Hello Packet Response:", helloPacketResponse);
+
+
         const elapsedMs = Math.ceil(Number(process.hrtime.bigint() - startNs) / 1e6);  // Convert to milliseconds
         results.push({
-          ipAddress: rinfo.address,
-          ipAddress2: msg[0x39] + "." + msg[0x38] + "." + msg[0x37] + "." + msg[0x36],
-          mac: msg.slice(0x3a, 0x3a + 6),
-          macAddress: Array.from(msg.slice(0x3a, 0x3a + 6)).map((byte) => Number(byte).toString(16).padStart(2, "0")).join(":"),
-          macAdd: this._utils.arrToHex(msg.slice(0x3a, 0x3a + 6)),
-          devtype: msg[0x34] | (msg[0x35] << 8),
-          devid: msg.slice(0x30, 0x30 + 4),
-          devname: msg.slice(0x40, 0x40 + 16).toString().replace(/\0/g, ""),
           response_time: elapsedMs, // ms
+          response_packet: helloPacketResponse.packet,
+          response_error: helloPacketResponse.header.errorCode === 0 ? null : helloPacketResponse.header.errorCode,
+
+          // Device IP address
+          ipAddress: rinfo.address,
+          ipAddressValid: helloPacketResponse.payload.deviceIP === rinfo.address,
+
+          // Device MAC address
+          macAddress: helloPacketResponse.deviceMacAddress,
+          macAddressRaw: helloPacketResponse.deviceMacAddressRaw,
+          macAddressLegacy: this._utils.arrToHex(msg.slice(0x3a, 0x3a + 6)),
+
+          // Device Info
+          devtype: helloPacketResponse.payload.deviceType,
+          devid: helloPacketResponse.payload.deviceId,
+          devname: helloPacketResponse.payload.deviceName,
+          devlocked: helloPacketResponse.deviceIsLocked,
         });
 
+
         // Resolve immediately if targeting a specific device (no broadcast)
-        if (device_ip_address !== "255.255.255.255") {
+        if (!isBroadcast) {
           clearTimeout(tm);
           sock.close();
           resolve(results);
@@ -629,11 +708,30 @@ class Communicate {
     // If a MAC address filter is provided, perform discovery and filter results by MAC address
     if (mac_adress) {
       const discovered = await this.discover(timeout, localIp, null);
-      return discovered.filter((info) => this._utils.arrToHex(info.mac) === this._utils.arrToHex(this._utils.hexToBuffer(mac_adress)));
+      return discovered.filter((info) => info.macAddressLegacy === this._utils.arrToHex(this._utils.hexToBuffer(mac_adress)));
     }
 
     return await this.discover(timeout, localIp, null);
   }
+
+  /**
+   * Get the firmware and profile version of the device. This can be used to determine the device type and capabilities.
+   * @returns {Promise<{ firmwareVersion: number, profileVersion: number }>} Object containing firmwareVersion and profileVersion
+   * @throws {Error} If there is an error retrieving the firmware version
+   */
+  async get_firmware_version() {
+    var payload = new Uint8Array([0x68]);
+    let response = await this.send_packet(0x6a, false, payload);
+    if (response.error == 0) {
+      const firmwareVersion = response.payload[0x00] | (response.payload[0x01] << 8);
+      const profileVersion  = response.payload[0x0c] | (response.payload[0x0d] << 8);
+      return { firmwareVersion, profileVersion };
+    } else {
+      throw new Error(this.homey.__("errors.get_firmware_version"));
+    }
+  }
+
+
 
   /**
    * Set device in learning mode.
@@ -644,7 +742,7 @@ class Communicate {
     this._utils.debugLog(this, ">> Entering IR learning (default) <<");
     var payload = new Uint8Array(16);
     payload[0] = 3;
-    await this.send_packet(0x6a, false, payload);
+    await this.send_packet(0x6a, false, payload); // command 0x6a = Send, version = false
   }
 
   async enter_learning_red() {
@@ -660,48 +758,23 @@ class Communicate {
    *
    */
   async _check_data(payload) {
-    this.checkRepeatCount = 8;
+    const maxAttempts = 8;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      this._utils.debugLog(this, `_check_data - attempt ${attempt}/${maxAttempts}`);
 
-    return new Promise<any>(
-      function (resolve, reject) {
-        let tm = setInterval(
-          function () {
-            this._utils.debugLog(this, "_check_data - repeat=" + this.checkRepeatCount);
-            this.send_packet(0x6a, false, payload)
-              .then(
-                function (response) {
-                  if (response.error == 0) {
-                    clearInterval(tm);
-                    tm = null;
-                    this._utils.debugLog(this, "**> _check_data resp = " + this._utils.asHex(response.payload));
-                    resolve(response.payload);
-                  } else {
-                    this.checkRepeatCount = this.checkRepeatCount - 1;
-                    if (this.checkRepeatCount <= 0) {
-                      clearInterval(tm);
-                      tm = null;
-                      reject("tried long enough");
-                    }
-                  }
-                }.bind(this),
-                (rejection) => {
-                  this._utils.debugLog(this, "**> _check_data - reject: " + rejection);
-                  clearInterval(tm);
-                  tm = null;
-                  reject("aborted");
-                }
-              )
-              .catch((err) => {
-                this._utils.debugLog(this, "**> _check_data - catch: " + err);
-                clearInterval(tm);
-                tm = null;
-                reject(err);
-              });
-          }.bind(this),
-          2000
-        ); // timeout in [msec]
-      }.bind(this)
-    );
+      // send_packet does not throw on a socket timeout (it returns error -1),
+      // so a lost poll simply falls through to the next attempt
+      const response = await this.send_packet(0x6a, false, payload);
+      if (response && response.error === 0) {
+        this._utils.debugLog(this, "**> _check_data resp = " + this._utils.asHex(response.payload));
+        return response.payload;
+      }
+      if (response && response.error === 0xfffb) {
+        this._utils.debugLog(this, "_check_data - no data captured yet (0xfffb)");
+      }
+    }
+    throw new Error("tried long enough");
   }
 
   // used for RM3 and RM3 Red bean only at this moment
@@ -750,7 +823,14 @@ class Communicate {
     payload[2] = 4; // Adjust the payload values as needed for RM4 Mini
     const response = await this._check_data(payload);
     if (trimmed) {
-      return response.subarray(2);
+      const data = response.subarray(2);
+      // Cap at the packet's own length field ([type][repeat][len LE][pulses]);
+      // anything beyond 4 + len is AES block padding
+      const pulseLen = data.length >= 4 ? data[2] | (data[3] << 8) : 0;
+      if (pulseLen > 0 && 4 + pulseLen <= data.length) {
+        return data.subarray(0, 4 + pulseLen);
+      }
+      return data;
     }
     return response;
   }
@@ -1033,7 +1113,7 @@ class Communicate {
     payload[4] = 0x00;
     payload[5] = 0x00;
     payload = this._utils.concatTypedArrays(payload, data);
-    this._utils.debugLog(this, `Sent device RM3 Red Bean :`, this.deviceType);
+    this._utils.debugLog(this, `Sent IR/RF data (new protocol, 6-byte header), deviceType 0x${this.deviceType.toString(16)}`);
     await this.send_packet(0x6a, false, payload);
   }
   async send_IR_RF_data_rm4pro(data) {
@@ -1114,8 +1194,9 @@ class Communicate {
    * @param  mode [boolean]  true = on, false = off
    */
   async mp1_set_power_state(sid, mode) {
-    if (sid !== Number) {
-      sid = Number(sid);
+    sid = Number(sid);
+    if (!Number.isInteger(sid) || sid < 1 || sid > 4) {
+      throw new Error(`Invalid socket id: ${sid} (expected 1-4)`);
     }
     let sid_mask = 0x01 << (sid - 1);
 

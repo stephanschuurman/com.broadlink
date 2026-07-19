@@ -42,6 +42,12 @@ Device.prototype.setWarning = async function (message) {
 class BroadlinkApp extends Homey.App {
   async onInit() {
     this.log(`${this.id} is running...(debug mode ${DEBUG ? "on" : "off"})`);
+    const Homey = require('homey');
+    if (Homey.env.BROADLINK_TEST_IP) {
+      this.log(`[app] BROADLINK_TEST_IP=${Homey.env.BROADLINK_TEST_IP} (env.json discovery override active)`);
+    } else {
+      this.log(`[app] BROADLINK_TEST_IP not set, using normal broadcast discovery`);
+    }
     if (DEBUG) {
       const inspector = require("inspector");
       if (!inspector.url()) {

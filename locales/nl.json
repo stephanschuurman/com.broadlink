@@ -11,7 +11,16 @@
     "invalid_sensor_limits": "Ongeldige sensor grenzen.",
     "invalid_schedule_time": "Ongeldige schema tijd",
     "no_key_detected": "no toets gedetecteerd",
-    "authentication_failed": "Authenticatie mislukt"
+    "authentication_failed": "Authenticatie mislukt",
+    "authentication_required": "Apparaat vereist authenticatie",
+    "discovery_failed": "Apparaat ontdekken mislukt",
+    "check_interval_failed": "Periodieke apparaatcontrole mislukt",
+    "no_rf_data": "Geen RF-data ontvangen",
+    "get_firmware_version": "Firmwareversie ophalen mislukt"
+  },
+  "common": {
+    "yes": "Ja",
+    "no": "Nee"
   },
   "pair": {
     "title": "Broadlink Apparaat Toevoegen",
@@ -28,6 +37,7 @@
     "invalid_ipaddress": "Ongeldig IP adres",
     "discovering": "Probeer apparaat te ontdekken...",
     "auto_discover_failed": "Automatisch zoeken mislukt. Voer het IP-adres handmatig in.",
+    "error_device_locked": "Apparaat is vergrendeld. Ontgrendel het apparaat in de Broadlink-app en probeer het opnieuw.",
     "has_sensors": "Heeft externe sensor",
     "properties": "Eigenschappen",
     "select_device": "Selecteer het apparaat",

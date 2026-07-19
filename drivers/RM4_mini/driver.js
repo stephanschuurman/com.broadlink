@@ -68,7 +68,7 @@ class BroadlinkRM4miniDriver extends BroadlinkDriver {
 		this.homey.flow.getActionCard('rm4m-send-pronto-hex').registerRunListener((args, state) => args.device.sendProntoHex(args.pronto_hex, args.repetitions));
 		this.homey.flow.getActionCard('rm4m-send-nec')		.registerRunListener((args, state) => args.device.sendNec(args.address, args.command, args.repetitions));
 		this.homey.flow.getActionCard('rm4m-send-rc5')		.registerRunListener((args, state) => args.device.sendRc5(args.address, args.command, args.repetitions));
-		this.homey.flow.getActionCard('rm4m-receive-hex')	.registerRunListener((args, state) => args.device.receiveBroadlinkHex());
+		this.homey.flow.getActionCard('rm4m-receive-hex')	.registerRunListener((args, state) => args.device.receiveBroadlinkHex(args.normalize !== 'off'));
 	}
 
 }

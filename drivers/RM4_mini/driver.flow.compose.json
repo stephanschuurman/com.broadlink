@@ -86,8 +86,8 @@
       "args": [
         {
           "title": {
-            "en": "Command",
-            "nl": "Commando"
+            "en": "broadlink hex",
+            "nl": "broadlink hex"
           },
           "type": "text",
           "name": "hex",
@@ -128,8 +128,8 @@
           "type": "text",
           "name": "base64",
           "title": {
-            "en": "Command",
-            "nl": "Commando"
+            "en": "broadlink base64",
+            "nl": "broadlink base64"
           },
           "placeholder": {
             "en": "broadlink base64",
@@ -166,8 +166,8 @@
       "args": [
         {
           "title": {
-            "en": "Command",
-            "nl": "Commando"
+            "en": "pronto hex",
+            "nl": "pronto hex"
           },
           "type": "text",
           "name": "pronto_hex",
@@ -199,20 +199,24 @@
         "nl": "Verstuur NEC-commando"
       },
       "titleFormatted": {
-        "en": "Send [[address]]-[[command]]-command [[repetitions]] times",
-        "nl": "Verstuur [[address]]-[[command]]-commando [[repetitions]] keer"
+        "en": "Send NEC [[address]]-[[command]]-command [[repetitions]] times",
+        "nl": "Verstuur NEC [[address]]-[[command]]-commando [[repetitions]] keer"
       },
       "args": [
         {
           "type": "text",
           "name": "address",
           "title": {
-            "en": "Address",
-            "nl": "Adres"
+            "en": "address",
+            "nl": "adres"
           },
           "placeholder": {
-            "en": "NEC address",
-            "nl": "NEC adres"
+            "en": "0x1A or 26",
+            "nl": "0x1A of 26"
+          },
+          "hint": {
+            "en": "NEC address, 0-255. Decimal, or hex with 0x prefix.",
+            "nl": "NEC-adres, 0-255. Decimaal, of hex met 0x-prefix."
           }
         },
         {
@@ -223,8 +227,12 @@
             "nl": "Commando"
           },
           "placeholder": {
-            "en": "NEC command",
-            "nl": "NEC commando"
+            "en": "0x1A or 26",
+            "nl": "0x1A of 26"
+          },
+          "hint": {
+            "en": "NEC command, 0-255. Decimal, or hex with 0x prefix.",
+            "nl": "NEC-commando, 0-255. Decimaal, of hex met 0x-prefix."
           }
         },
         {
@@ -252,20 +260,24 @@
         "nl": "Verstuur RC5-commando"
       },
       "titleFormatted": {
-        "en": "Send [[address]]-[[command]]-command [[repetitions]] times",
-        "nl": "Verstuur [[address]]-[[command]]-commando [[repetitions]] keer"
+        "en": "Send RC5 [[address]]-[[command]]-command [[repetitions]] times",
+        "nl": "Verstuur RC5 [[address]]-[[command]]-commando [[repetitions]] keer"
       },
       "args": [
         {
           "type": "text",
           "name": "address",
           "title": {
-            "en": "Address",
-            "nl": "Adres"
+            "en": "address",
+            "nl": "adres"
           },
           "placeholder": {
-            "en": "RC5 address",
-            "nl": "RC5 adres"
+            "en": "0x1A or 26",
+            "nl": "0x1A of 26"
+          },
+          "hint": {
+            "en": "RC5 address, 0-31. Decimal, or hex with 0x prefix.",
+            "nl": "RC5-adres, 0-31. Decimaal, of hex met 0x-prefix."
           }
         },
         {
@@ -276,8 +288,12 @@
             "nl": "Commando"
           },
           "placeholder": {
-            "en": "RC5 command",
-            "nl": "RC5 commando"
+            "en": "0x1A or 26",
+            "nl": "0x1A of 26"
+          },
+          "hint": {
+            "en": "RC5 command, 0-63. Decimal, or hex with 0x prefix.",
+            "nl": "RC5-commando, 0-63. Decimaal, of hex met 0x-prefix."
           }
         },
         {
@@ -305,14 +321,39 @@
         "nl": "Start opname-modus"
       },
       "titleFormatted": {
-        "en": "Start recording mode to Hex and Base64-string",
-        "nl": "Start opname-modus naar Hex en Base64-string"
+        "en": "Start recording mode to Hex, Base64 and Pronto with [[normalize]]",
+        "nl": "Start opname-modus naar Hex, Base64 en Pronto met [[normalize]]"
       },
       "hint": {
-        "en": "Start the IR learning mode. The device will wait for an IR signal and return the result in both Broadlink Hex and Base64 formats.",
-        "nl": "Start de IR-leermodus. Het apparaat wacht op een IR-signaal en geeft het resultaat terug in zowel Broadlink Hex- als Base64-indelingen."
+        "en": "Start the IR learning mode. The device waits for an IR signal and returns the result as Broadlink Hex, Base64 and Pronto hex. Normalization removes the lead-in and repeated bursts, quantizes the timings and sets the type byte to 0x26; turn it off to get the raw capture in every token.",
+        "nl": "Start de IR-leermodus. Het apparaat wacht op een IR-signaal en geeft het resultaat terug als Broadlink Hex, Base64 en Pronto hex. Normalisatie verwijdert de lead-in en herhaalde bursts, kwantiseert de timing en zet de type-byte op 0x26; zet dit uit om in alle tokens de rauwe opname te krijgen."
       },
-      "args": [],
+      "args": [
+        {
+          "name": "normalize",
+          "type": "dropdown",
+          "title": {
+            "en": "Normalization",
+            "nl": "Normalisatie"
+          },
+          "values": [
+            {
+              "id": "on",
+              "label": {
+                "en": "normalization on",
+                "nl": "normalisatie aan"
+              }
+            },
+            {
+              "id": "off",
+              "label": {
+                "en": "normalization off (raw)",
+                "nl": "normalisatie uit (rauw)"
+              }
+            }
+          ]
+        }
+      ],
       "tokens": [
         {
           "name": "ir_result_hex",
@@ -334,6 +375,39 @@
           },
           "example": {
             "en": "JgAaAB0dOjodHR0dHR0dHTodHR0dHR0dHTodAAuHDQU="
+          }
+        },
+        {
+          "name": "ir_result_hex_clean",
+          "type": "string",
+          "title": {
+            "en": "IR Result Broadlink Hex (cleaned)",
+            "nl": "IR Resultaat Broadlink Hex (opgeschoond)"
+          },
+          "example": {
+            "en": "260018001d1d3a1d1d1d1d1d1d1d1d3a3a1d1d1d1d1d1d3a3a000d050d05"
+          }
+        },
+        {
+          "name": "ir_result_base64_clean",
+          "type": "string",
+          "title": {
+            "en": "IR Result Broadlink Base64 (cleaned)",
+            "nl": "IR Resultaat Broadlink Base64 (opgeschoond)"
+          },
+          "example": {
+            "en": "JgAYAB0dOh0dHR0dHR0dOjodHR0dHR06OgANBQ0F"
+          }
+        },
+        {
+          "name": "ir_result_pronto",
+          "type": "string",
+          "title": {
+            "en": "IR Result Pronto Hex",
+            "nl": "IR Resultaat Pronto Hex"
+          },
+          "example": {
+            "en": "0000 0073 000B 0000 0020 0020 0041 0020 0020 0020 0020 0020 0020 0020 0020 0041 0041 0020 0020 0020 0020 0020 0020 0041 0041 0BB8"
           }
         }
       ]

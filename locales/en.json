@@ -11,7 +11,16 @@
     "invalid_sensor_limits": "Invalid sensor limits",
     "invalid_schedule_time": "Invalid schedule time",
     "no_key_detected": "no key detected",
-    "authentication_failed": "Authentication failed"
+    "authentication_failed": "Authentication failed",
+    "authentication_required": "Device requires authentication",
+    "discovery_failed": "Device discovery failed",
+    "check_interval_failed": "Periodic device check failed",
+    "no_rf_data": "No RF data captured",
+    "get_firmware_version": "Failed to get firmware version"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No"
   },
   "pair": {
     "title": "Pair Broadlink Device",
@@ -28,6 +37,7 @@
     "invalid_ipaddress": "Invalid IP address",
     "discovering": "Discovering device...",
     "auto_discover_failed": "Auto discovery failed. Please enter the IP address manually.",
+    "error_device_locked": "Device is locked. Please unlock the device in the Broadlink app and try again.",
     "has_sensors": "Has external sensor",
     "properties": "Properties",
     "select_device": "Select device",

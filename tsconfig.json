@@ -3,8 +3,9 @@
   "compilerOptions": {
     "outDir": ".homeybuild/",
     "sourceMap": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "Node16", // commonjs
+    "moduleResolution": "Node16",
+    "types": ["node"],
     "strict": false,
     "esModuleInterop": true,
     "allowJs": true,
@@ -13,7 +14,14 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true
   },
+  "devDependencies": {
+    "@types/node": "^24.14.1"
+  },
   "include": [
-    "lib/Communicate.ts"
+    "lib/Communicate.ts",
+    "lib/BroadlinkPackages.ts",
+    "lib/BroadLink/protocol/**/*.ts",
+    "lib/BroadLink/types/payload-type.ts", 
+    "lib/BroadLink/protocol/demo.js" 
   ]
 }

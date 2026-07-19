@@ -107,9 +107,10 @@ class RM4miniDevice extends BroadlinkDevice {
 
       this._utils.debugLog(this, "executeCommand " + cmd.name, " - data: " + this._utils.arrToHex(cmdData));
 
-      // send the command
-
-      await this._communicate.send_IR_RF_data_red(cmdData);
+      // Normalize before sending: commands stored by older versions still
+      // carry the 2-byte response prefix and AES padding
+      const sendData = IrConverter.normalizeStoredCommand(cmdData);
+      await this._communicate.send_IR_RF_data_minired(sendData);
       cmdData = null;
 
       let drv = this.driver;
@@ -220,8 +221,8 @@ class RM4miniDevice extends BroadlinkDevice {
         await this._communicate.enter_learning_red();
         this._utils.debugLog(this, "Entered learning mode");
 
-        let data = await this._communicate.check_IR_data_rm4mini(false);
-        this._utils.debugLog(this, `Checked IR data, data: ${data}`);
+        let data = await this._communicate.check_IR_data_rm4mini(true);
+        this._utils.debugLog(this, `Checked IR data, data: ${this._utils.arrToHex(data)}`);
 
         if (data) {
           const cmdname = this.getNextCmdName();
@@ -318,8 +319,8 @@ class RM4miniDevice extends BroadlinkDevice {
 
   /**
    * Convert NEC address and command to a pronto hex string, then send it as Broadlink data.
-   * @param {string} address, Hex string (1 byte), e.g. "00"
-   * @param {string} command, Hex string (1 byte), e.g. "02"
+   * @param {number|string} address  0-255, decimal ("26") or hex ("0x1A")
+   * @param {number|string} command  0-255, decimal ("26") or hex ("0x1A")
    * @param {number} repetitions
    * @returns {Promise<boolean>}  True if the command was sent successfully
    */
@@ -331,8 +332,8 @@ class RM4miniDevice extends BroadlinkDevice {
 
   /**
    * Convert RC5 address and command to a pronto hex string, then send it as Broadlink data.
-   * @param {string} address, Hex string (1 byte), e.g. "00"
-   * @param {string} command, Hex string (1 byte), e.g. "02"
+   * @param {number|string} address  0-31, decimal ("26") or hex ("0x1A")
+   * @param {number|string} command  0-63, decimal ("26") or hex ("0x1A")
    * @param {number} repetitions
    * @returns {Promise<boolean>}  True if the command was sent successfully
    */
@@ -344,9 +345,13 @@ class RM4miniDevice extends BroadlinkDevice {
 
   /**
    * Start the IR receiving (learning) mode.
-   * @returns {Promise<{ir_result_hex: string, ir_result_base64: string}>}  The learned IR data in both hex and base64 formats
+   * Returns the raw capture plus a cleaned-up version (lead-in and repeated
+   * bursts removed, durations quantized, type byte normalized to 0x26) and a
+   * Pronto hex conversion carrying the measured carrier frequency.
+   * @param {boolean} normalize  false skips cleaning: all tokens carry the raw capture
+   * @returns {Promise<{ir_result_hex: string, ir_result_base64: string, ir_result_hex_clean: string, ir_result_base64_clean: string, ir_result_pronto: string}>}
    */
-  async receiveBroadlinkHex() {
+  async receiveBroadlinkHex(normalize = true) {
     try {
       await this._communicate.enter_learning_red();
       this._utils.debugLog(this, "Entered learning mode, waiting on IR data...");
@@ -354,9 +359,42 @@ class RM4miniDevice extends BroadlinkDevice {
       const hexData = IrConverter.toHexCompact(data);
       const base64Data = IrConverter.broadlinkHexToBroadlinkBase64(hexData);
       this._utils.debugLog(this, `Received IR data (Broadlink Hex): ${hexData}`);
+
+      let cleanHex = hexData;
+      let cleanBase64 = base64Data;
+      let prontoSource = data;
+      let prontoCarrier = null; // null: derive from byte 0 of the raw capture
+      if (normalize) {
+        const cleaned = IrConverter.cleanCapture(data);
+        if (cleaned) {
+          cleanHex = IrConverter.toHexCompact(cleaned.data);
+          cleanBase64 = IrConverter.broadlinkHexToBroadlinkBase64(cleanHex);
+          prontoSource = cleaned.data;
+          prontoCarrier = cleaned.carrier;
+          this._utils.debugLog(
+            this,
+            `Cleaned IR data (byte 0 was 0x${cleaned.carrier.toString(16)}, kept ${cleaned.burstsKept}/${cleaned.burstsTotal} burst(s)): ${cleanHex}`
+          );
+        } else {
+          this._utils.debugLog(this, "Capture could not be cleaned, returning raw data for all tokens");
+        }
+      } else {
+        this._utils.debugLog(this, "Normalization disabled, returning raw capture for all tokens");
+      }
+
+      const pronto = IrConverter.broadlinkToPronto(prontoSource, prontoCarrier);
+      if (pronto) {
+        this._utils.debugLog(this, `Pronto hex: ${pronto}`);
+      } else {
+        this._utils.debugLog(this, "Pronto conversion failed, returning empty token");
+      }
+
       return {
         "ir_result_hex": hexData,
-        "ir_result_base64": base64Data
+        "ir_result_base64": base64Data,
+        "ir_result_hex_clean": cleanHex,
+        "ir_result_base64_clean": cleanBase64,
+        "ir_result_pronto": pronto || ""
       };
     } catch (e) {
       this._utils.debugLog(this, `Error starting learning mode: ${e}`);
@@ -432,7 +470,8 @@ class RM4miniDevice extends BroadlinkDevice {
 
     for (let i = 0; i < changedKeys.length; i++) {
       const key = changedKeys[i];
-      if (key === "RcCmdOffset" || key === "RcCmdPage") {
+      // Discovery settings are handled by the base class, not the rename logic
+      if (key === "RcCmdOffset" || key === "RcCmdPage" || key === "discovery_interval" || key === "ip_assignment_mode") {
         continue;
       }
       const oldName = oldSettings[key] || "";
@@ -500,6 +539,9 @@ class RM4miniDevice extends BroadlinkDevice {
     if (offsetChanged) {
       setTimeout(() => this.fillRcCmdPage(newOffset), 0);
     }
+
+    // Base class handles the discovery timer (discovery_interval / ip_assignment_mode)
+    super.onSettings({ oldSettings, newSettings, changedKeys });
 
     this._utils.debugLog(this, "Settings successfully updated.");
   }
