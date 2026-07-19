@@ -6,7 +6,7 @@
  *   import { HelloCommandPacket, PayloadType, BroadlinkPacket } from './protocol';
  */
 
-export { BroadlinkHeader, BroadlinkPacket } from './types';
+export { BroadlinkHeader, BroadlinkPacket, BroadlinkPayload, BroadlinkPayloadHelloResponse, BroadlinkPayloadAuthCommand, PayloadType, DeviceLockStatus } from './types';
 export { BroadlinkPacketBase } from './packet-base';
 export { HelloCommandPacket } from './hello-command';
 export { HelloResponsePacket } from './hello-response';

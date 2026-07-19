@@ -49,6 +49,7 @@ export class HelloResponsePacket extends BroadlinkPacketBase {
       macAddress:  '00:00:00:00:00:00',
     };
     this.payload = {
+      payloadType: PayloadType.Response.Hello,
       deviceId: 0x0000000000,
       deviceType: 0x0000,
       deviceIP: '0.0.0.0',

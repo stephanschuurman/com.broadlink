@@ -73,7 +73,7 @@ export abstract class BroadlinkPacketBase implements BroadlinkPacket {
     // getTimezoneOffset() returns (UTC − local) in minutes, so negate and divide.
     const jan     = new Date(this.header.timestamp.getFullYear(), 0, 1);
     const tzHours = (jan.getTimezoneOffset() / -60) | 0;
-    buf.writeUInt32LE(tzHours, 0x08);
+    buf.writeInt32LE(tzHours, 0x08);
 
     // ── 0x0c-0x0d: year (LE uint16) ──
     buf.writeUInt16LE(this.header.timestamp.getFullYear(), 0x0c);
@@ -141,8 +141,8 @@ export abstract class BroadlinkPacketBase implements BroadlinkPacket {
     // ── 0x20-0x21: checksum over the whole packet (LE uint16) ──
     // Calculated last so the payload is already in the buffer.
     const calculatedChecksum = BroadlinkPacketBase.calculateChecksum(buf);
-    this.header.checksumValid = (buf.writeUInt16LE(calculatedChecksum, 0x20) === this.header.checksum);
     buf.writeUInt16LE(calculatedChecksum, 0x20);
+    this.header.checksum = calculatedChecksum;
 
     return buf;
   }

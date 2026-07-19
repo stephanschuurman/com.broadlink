@@ -45,16 +45,17 @@ export interface BroadlinkHeader {
   macAddress:  string;  // e.g. "01:23:45:67:89:ab"
 }
 
-export interface BroadlinkPayload {}
-
-export interface BroadlinkPayloadHelloResponse extends BroadlinkPayload {
-    deviceId:     number;          // 4-byte Device ID (based on Epoch Unix Timestamp at production time???)
-    deviceType:   number;          // 2-byte Device Type
-    deviceIP:     string;          // 4-byte Device IP address
-    deviceMacAddress: string;      // 6-byte MAC address
-    deviceName:   string;          // UTF-8 string, null-terminated
-    deviceLocked: DeviceLockStatus;
-}
+/**
+ * Discriminated union of all known payload shapes.
+ *
+ * Each structured payload carries a `payloadType` discriminant so TypeScript can
+ * narrow `packet.payload` once the packet type is known. A raw `Buffer` is also
+ * allowed for empty or not-yet-parsed payloads.
+ */
+export type BroadlinkPayload =
+  | BroadlinkPayloadHelloResponse
+  | BroadlinkPayloadAuthCommand
+  | Buffer;
 
 /**
  * Interface representing the payload of an Auth Command Response (0x65) packet from a Broadlink device. 
@@ -64,11 +65,10 @@ export interface BroadlinkPayloadHelloResponse extends BroadlinkPayload {
  * It contains information about the device, such as its ID, type, IP address, MAC address, name, and lock status.
  *
  * @interface BroadlinkPayloadAuthCommand
- * @extends {BroadlinkPayload}
  */
-export interface BroadlinkPayloadAuthCommand extends BroadlinkPayload {
+export interface BroadlinkPayloadAuthCommand {
+  payloadType:      PayloadType.Command.Auth;  // discriminant
   deviceId:         number;  // 4-byte Device ID
-
 }
 
 
@@ -80,39 +80,16 @@ export const enum DeviceLockStatus {
 }
 
 /**
- * Interface representing the header of a BroadLink packet.
- *
- * The header is a fixed-size structure that precedes the payload in a BroadLink packet.
- * It contains metadata about the packet, such as the source IP and port, device type, and payload type.
- *
- * @interface BroadlinkHeader
- */
-export interface BroadlinkHeader {
-  magicHeader: Buffer;  // always 0x5a 0xa5 0xaa 0x55 0x5a 0xa5 0xaa 0x55
-  timestamp:   Date;    // current date/time (used in discovery packets to calculate timezone offset)
-  srcIp:       string;  // e.g. "192.168.1.10"
-  srcPort:     number;  // UDP source port number
-  checksum:    number;  // 16-bit checksum calculated as (0xbeaf + sum of all bytes) & 0xffff
-  errorCode:   number;
-  deviceType:  number;
-  payloadType: PayloadType.Command | PayloadType.Response;
-  packetCount: number;
-  macAddress:  string;  // e.g. "01:23:45:67:89:ab"
-}
-
-
-
-/**
  * Interface representing the payload of a Hello Response packet from a BroadLink device.
  *
  * The Hello Response packet is sent by a BroadLink device in response to a Hello Request packet.
  * It contains information about the device, such as its ID, type, IP address, MAC address, name, and lock status.
  *
  * @interface BroadlinkPayloadHelloResponse
- * @extends {BroadlinkPayload}
  */
-export interface BroadlinkPayloadHelloResponse extends BroadlinkPayload {
-  deviceId:         number;  // 4-byte Device ID
+export interface BroadlinkPayloadHelloResponse {
+  payloadType:      PayloadType.Response.Hello;  // discriminant
+  deviceId:         number;  // 4-byte Device ID (based on Epoch Unix Timestamp at production time???)
   deviceType:       number;  // 2-byte Device Type
   deviceIP:         string;  // 4-byte Device IP address
   deviceMacAddress: string;  // 6-byte MAC address

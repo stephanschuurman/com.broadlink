@@ -49,6 +49,7 @@ export class AuthCommandPacket extends BroadlinkPacketBase {
       macAddress:  '00:00:00:00:00:00',
     };
     this.payload = {
+      payloadType: PayloadType.Command.Auth,
       deviceId: 0,
     };
   }
