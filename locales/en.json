@@ -10,22 +10,30 @@
     "invalid_response": "Invalid response from device",
     "invalid_sensor_limits": "Invalid sensor limits",
     "invalid_schedule_time": "Invalid schedule time",
-    "no_key_detected": "no key detected"
+    "no_key_detected": "no key detected",
+    "authentication_failed": "Authentication failed",
+    "authentication_required": "Device requires authentication",
+    "check_interval_failed": "Periodic device check failed",
+    "discovery_failed": "Device discovery failed",
+    "get_firmware_version": "Failed to get firmware version",
+    "no_rf_data": "No RF data captured",
+    "discovery_failed_no_ip": "Discovery failed and no IP address is known for this device"
   },
   "pair": {
     "title": "Pair Broadlink Device",
     "intro": "Configure the device with the Broadlink / e-Control app on a smartphone, ensure it's NOT locked.<br>Get the IP address from your wifi router.",
-	"cancel": "Cancel",
-	"add": "Add",
-	"address": "IP address",
-	"error_no_discover": "No device discovered. Did you switch it on, and is it connectect to your WiFi network ?",
-	"found_another": "Found another device: __dev__ (__type__)",
-	"invalid_ipaddress": "Invalid IP address",
-	"discovering": "Discovering device...",
-	"has_sensors":"Has external sensor",
-	"properties":"Properties",
-	"select_device":"Select device",
-	"next":"Next &gt;"
+    "cancel": "Cancel",
+    "add": "Add",
+    "address": "IP address",
+    "error_no_discover": "No device discovered. Did you switch it on, and is it connectect to your WiFi network ?",
+    "found_another": "Found another device: __dev__ (__type__)",
+    "invalid_ipaddress": "Invalid IP address",
+    "discovering": "Discovering device...",
+    "has_sensors": "Has external sensor",
+    "properties": "Properties",
+    "select_device": "Select device",
+    "next": "Next &gt;",
+    "error_device_locked": "Device is locked. Please unlock the device in the Broadlink app and try again."
   },
   "settings": {
     "title": "Broadlink Debug Settings",
@@ -65,5 +73,9 @@
     "multi_presses": "Now keep press button repeatedly and shortly until LED turns off",
     "done": "RF signal stored",
     "error": "RF signal learning failed"
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No"
   }
 }

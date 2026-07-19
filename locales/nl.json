@@ -10,22 +10,30 @@
     "invalid_response": "ongeldig antwoord van apparaat.",
     "invalid_sensor_limits": "Ongeldige sensor grenzen.",
     "invalid_schedule_time": "Ongeldige schema tijd",
-    "no_key_detected": "no toets gedetecteerd"
+    "no_key_detected": "no toets gedetecteerd",
+    "authentication_failed": "Authenticatie mislukt",
+    "authentication_required": "Apparaat vereist authenticatie",
+    "check_interval_failed": "Periodieke apparaatcontrole mislukt",
+    "discovery_failed": "Apparaat ontdekken mislukt",
+    "get_firmware_version": "Firmwareversie ophalen mislukt",
+    "no_rf_data": "Geen RF-data ontvangen",
+    "discovery_failed_no_ip": "Apparaat niet gevonden en er is geen IP-adres bekend voor dit apparaat"
   },
   "pair": {
     "title": "Broadlink Apparaat Toevoegen",
     "intro": "Configureer het apparaat met de Broadlink / e-Control app op een smartphone, zorg ervoor dat het NIET vergrendeld is.<br>Verkrijg het IP-adres van uw wifi-router.",
-	"cancel": "Stop",
-	"add": "Toevoegen",
-	"address": "IP address",
-	"error_no_discover": "Geen apparaat gevonden. Is het apparaat aan, en is het verbonden met het Wifi netwerk ?",
-	"found_another": "Ander apparaat gevonden: __dev__ (__type__)",
-	"invalid_ipaddress": "Ongeldig IP adres",
-	"discovering": "Probeer apparaat te ontdekken...",
-	"has_sensors":"Heeft externe sensor",
-	"properties":"Eigenschappen",
-	"select_device":"Selecteer het apparaat",
-	"next":"Volgende &gt;"
+    "cancel": "Stop",
+    "add": "Toevoegen",
+    "address": "IP address",
+    "error_no_discover": "Geen apparaat gevonden. Is het apparaat aan, en is het verbonden met het Wifi netwerk ?",
+    "found_another": "Ander apparaat gevonden: __dev__ (__type__)",
+    "invalid_ipaddress": "Ongeldig IP adres",
+    "discovering": "Probeer apparaat te ontdekken...",
+    "has_sensors": "Heeft externe sensor",
+    "properties": "Eigenschappen",
+    "select_device": "Selecteer het apparaat",
+    "next": "Volgende &gt;",
+    "error_device_locked": "Apparaat is vergrendeld. Ontgrendel het apparaat in de Broadlink-app en probeer het opnieuw."
   },
   "settings": {
     "title": "Broadlink Debug Instellingen",
@@ -65,5 +73,9 @@
     "multi_presses": "Druk nu herhaaldelijk en kort op de knop totdat het LED-lampje uitgaat",
     "done": "RF-signaal opgeslagen",
     "error": "RF-signaal leren mislukt"
+  },
+  "common": {
+    "yes": "Ja",
+    "no": "Nee"
   }
 }
