@@ -508,6 +508,10 @@
             "filter": "driver_id=RM4_mini"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
@@ -1498,11 +1502,384 @@
             "filter": "driver_id=RM4_mini"
           },
           {
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
             "name": "variable",
             "type": "autocomplete",
             "placeholder": {
               "en": "name",
               "nl": "naam"
+            }
+          }
+        ]
+      },
+      {
+        "id": "rm4m-send-hex",
+        "title": {
+          "en": "Send Broadlink Hex",
+          "nl": "Verstuur Broadlink Hex"
+        },
+        "titleFormatted": {
+          "en": "Send [[hex]]-command [[repetitions]] keer",
+          "nl": "Verstuur [[hex]]-commando [[repetitions]] keer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=RM4_mini"
+          },
+          {
+            "title": {
+              "en": "broadlink hex",
+              "nl": "broadlink hex"
+            },
+            "type": "text",
+            "name": "hex",
+            "placeholder": {
+              "en": "broadlink hex",
+              "nl": "broadlink hex"
+            }
+          },
+          {
+            "type": "number",
+            "name": "repetitions",
+            "required": false,
+            "title": {
+              "en": "repetitions",
+              "nl": "herhalingen"
+            },
+            "placeholder": {
+              "en": "10"
+            },
+            "min": 1,
+            "max": 20,
+            "step": 1
+          }
+        ]
+      },
+      {
+        "id": "rm4m-send-base64",
+        "title": {
+          "en": "Send Broadlink Base64",
+          "nl": "Verstuur Broadlink Base64"
+        },
+        "titleFormatted": {
+          "en": "Send [[base64]]-command [[repetitions]] keer",
+          "nl": "Verstuur [[base64]]-commando [[repetitions]] keer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=RM4_mini"
+          },
+          {
+            "type": "text",
+            "name": "base64",
+            "title": {
+              "en": "broadlink base64",
+              "nl": "broadlink base64"
+            },
+            "placeholder": {
+              "en": "broadlink base64",
+              "nl": "broadlink base64"
+            }
+          },
+          {
+            "type": "number",
+            "name": "repetitions",
+            "required": false,
+            "title": {
+              "en": "repetitions",
+              "nl": "herhalingen"
+            },
+            "placeholder": {
+              "en": "10"
+            },
+            "min": 1,
+            "max": 20,
+            "step": 1
+          }
+        ]
+      },
+      {
+        "id": "rm4m-send-pronto-hex",
+        "title": {
+          "en": "Send pronto hex",
+          "nl": "Verstuur pronto hex"
+        },
+        "titleFormatted": {
+          "en": "Send [[pronto_hex]]-command [[repetitions]] keer",
+          "nl": "Verstuur [[pronto_hex]]-commando [[repetitions]] keer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=RM4_mini"
+          },
+          {
+            "title": {
+              "en": "pronto hex",
+              "nl": "pronto hex"
+            },
+            "type": "text",
+            "name": "pronto_hex",
+            "placeholder": {
+              "en": "pronto hex"
+            }
+          },
+          {
+            "type": "number",
+            "name": "repetitions",
+            "required": false,
+            "title": {
+              "en": "repetitions",
+              "nl": "herhalingen"
+            },
+            "placeholder": {
+              "en": "10"
+            },
+            "min": 1,
+            "max": 20,
+            "step": 1
+          }
+        ]
+      },
+      {
+        "id": "rm4m-send-nec",
+        "title": {
+          "en": "Send NEC command",
+          "nl": "Verstuur NEC-commando"
+        },
+        "titleFormatted": {
+          "en": "Send NEC [[address]]-[[command]]-command [[repetitions]] times",
+          "nl": "Verstuur NEC [[address]]-[[command]]-commando [[repetitions]] keer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=RM4_mini"
+          },
+          {
+            "type": "text",
+            "name": "address",
+            "title": {
+              "en": "address",
+              "nl": "adres"
+            },
+            "placeholder": {
+              "en": "0x1A or 26",
+              "nl": "0x1A of 26"
+            },
+            "hint": {
+              "en": "NEC address, 0-255. Decimal, or hex with 0x prefix.",
+              "nl": "NEC-adres, 0-255. Decimaal, of hex met 0x-prefix."
+            }
+          },
+          {
+            "type": "text",
+            "name": "command",
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
+            "placeholder": {
+              "en": "0x1A or 26",
+              "nl": "0x1A of 26"
+            },
+            "hint": {
+              "en": "NEC command, 0-255. Decimal, or hex with 0x prefix.",
+              "nl": "NEC-commando, 0-255. Decimaal, of hex met 0x-prefix."
+            }
+          },
+          {
+            "type": "number",
+            "name": "repetitions",
+            "required": false,
+            "title": {
+              "en": "repetitions",
+              "nl": "herhalingen"
+            },
+            "placeholder": {
+              "en": "10",
+              "nl": "10"
+            },
+            "min": 1,
+            "max": 20,
+            "step": 1
+          }
+        ]
+      },
+      {
+        "id": "rm4m-send-rc5",
+        "title": {
+          "en": "Send RC5 command",
+          "nl": "Verstuur RC5-commando"
+        },
+        "titleFormatted": {
+          "en": "Send RC5 [[address]]-[[command]]-command [[repetitions]] times",
+          "nl": "Verstuur RC5 [[address]]-[[command]]-commando [[repetitions]] keer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=RM4_mini"
+          },
+          {
+            "type": "text",
+            "name": "address",
+            "title": {
+              "en": "address",
+              "nl": "adres"
+            },
+            "placeholder": {
+              "en": "0x1A or 26",
+              "nl": "0x1A of 26"
+            },
+            "hint": {
+              "en": "RC5 address, 0-31. Decimal, or hex with 0x prefix.",
+              "nl": "RC5-adres, 0-31. Decimaal, of hex met 0x-prefix."
+            }
+          },
+          {
+            "type": "text",
+            "name": "command",
+            "title": {
+              "en": "Command",
+              "nl": "Commando"
+            },
+            "placeholder": {
+              "en": "0x1A or 26",
+              "nl": "0x1A of 26"
+            },
+            "hint": {
+              "en": "RC5 command, 0-63. Decimal, or hex with 0x prefix.",
+              "nl": "RC5-commando, 0-63. Decimaal, of hex met 0x-prefix."
+            }
+          },
+          {
+            "type": "number",
+            "name": "repetitions",
+            "required": false,
+            "title": {
+              "en": "repetitions",
+              "nl": "herhalingen"
+            },
+            "placeholder": {
+              "en": "10",
+              "nl": "10"
+            },
+            "min": 1,
+            "max": 20,
+            "step": 1
+          }
+        ]
+      },
+      {
+        "id": "rm4m-receive-hex",
+        "title": {
+          "en": "Start recording mode",
+          "nl": "Start opname-modus"
+        },
+        "titleFormatted": {
+          "en": "Start recording mode to Hex, Base64 and Pronto with [[normalize]]",
+          "nl": "Start opname-modus naar Hex, Base64 en Pronto met [[normalize]]"
+        },
+        "hint": {
+          "en": "Start the IR learning mode. The device waits for an IR signal and returns the result as Broadlink Hex, Base64 and Pronto hex. Normalization removes the lead-in and repeated bursts, quantizes the timings and sets the type byte to 0x26; turn it off to get the raw capture in every token.",
+          "nl": "Start de IR-leermodus. Het apparaat wacht op een IR-signaal en geeft het resultaat terug als Broadlink Hex, Base64 en Pronto hex. Normalisatie verwijdert de lead-in en herhaalde bursts, kwantiseert de timing en zet de type-byte op 0x26; zet dit uit om in alle tokens de rauwe opname te krijgen."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=RM4_mini"
+          },
+          {
+            "name": "normalize",
+            "type": "dropdown",
+            "title": {
+              "en": "Normalization",
+              "nl": "Normalisatie"
+            },
+            "values": [
+              {
+                "id": "on",
+                "label": {
+                  "en": "normalization on",
+                  "nl": "normalisatie aan"
+                }
+              },
+              {
+                "id": "off",
+                "label": {
+                  "en": "normalization off (raw)",
+                  "nl": "normalisatie uit (rauw)"
+                }
+              }
+            ]
+          }
+        ],
+        "tokens": [
+          {
+            "name": "ir_result_hex",
+            "type": "string",
+            "title": {
+              "en": "IR Result Broadlink Hex",
+              "nl": "IR Resultaat Broadlink Hex"
+            },
+            "example": {
+              "en": "26001a001d1d3a3a1d1d1d1d1d1d1d1d3a1d1d1d1d1d1d1d1d3a1d000b870d05"
+            }
+          },
+          {
+            "name": "ir_result_base64",
+            "type": "string",
+            "title": {
+              "en": "IR Result Broadlink Base64",
+              "nl": "IR Resultaat Broadlink Base64"
+            },
+            "example": {
+              "en": "JgAaAB0dOjodHR0dHR0dHTodHR0dHR0dHTodAAuHDQU="
+            }
+          },
+          {
+            "name": "ir_result_hex_clean",
+            "type": "string",
+            "title": {
+              "en": "IR Result Broadlink Hex (cleaned)",
+              "nl": "IR Resultaat Broadlink Hex (opgeschoond)"
+            },
+            "example": {
+              "en": "260018001d1d3a1d1d1d1d1d1d1d1d3a3a1d1d1d1d1d1d3a3a000d050d05"
+            }
+          },
+          {
+            "name": "ir_result_base64_clean",
+            "type": "string",
+            "title": {
+              "en": "IR Result Broadlink Base64 (cleaned)",
+              "nl": "IR Resultaat Broadlink Base64 (opgeschoond)"
+            },
+            "example": {
+              "en": "JgAYAB0dOh0dHR0dHR0dOjodHR0dHR06OgANBQ0F"
+            }
+          },
+          {
+            "name": "ir_result_pronto",
+            "type": "string",
+            "title": {
+              "en": "IR Result Pronto Hex",
+              "nl": "IR Resultaat Pronto Hex"
+            },
+            "example": {
+              "en": "0000 0073 000B 0000 0020 0020 0041 0020 0020 0020 0020 0020 0020 0020 0020 0041 0041 0020 0020 0020 0020 0020 0020 0041 0041 0BB8"
             }
           }
         ]
