@@ -7,11 +7,23 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "test": "tsc -p tsconfig.build.json && node --test tests/*.test.js '.homeybuild/lib/**/*.test.js'",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch",
+    "build": "tsc -p tsconfig.build.json"
   },
   "keywords": [],
-  "author": "",
+  "author": "Bretislav Kubesa, Remko Wensveen, Finn Kristian Meland, Pieter Verougstraete, Stephan Schuurman",
   "license": "ISC",
+  "engines": {
+    "node": ">=24.14.1"
+  },
+  "devDependencies": {
+    "@tsconfig/node24": "^24.0.4",
+    "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.12",
+    "@types/node": "^25.5.2",
+    "typescript": "^5.9.3"
+  },
   "dependencies": {
     "crc": "^4.3.2"
   }
